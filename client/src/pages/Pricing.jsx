@@ -20,45 +20,30 @@ export default function Pricing() {
     }
 
     try {
+      toast.loading('Redirecting to eSewa...', { id: 'payment' });
       const { data } = await api.post('/payment/initiate', { plan });
       
       if (data.success) {
-        // Check if it's mock payment (development mode)
-        if (data.mock) {
-          // Show mock payment dialog
-          const confirmed = window.confirm(
-            `Mock Payment Mode (Development)\n\n` +
-            `Plan: ${plan.toUpperCase()}\n` +
-            `Amount: NPR ${plan === 'starter' ? '600' : '1800'}\n\n` +
-            `Click OK to simulate successful payment`
-          );
+        // Create form and submit to eSewa
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = data.paymentUrl;
 
-          if (confirmed) {
-            // Simulate payment success
-            await api.post('/payment/mock-success', { plan });
-            toast.success('Subscription activated! (Mock Payment)');
-            navigate('/dashboard');
-          }
-        } else {
-          // Real eSewa payment - create form and submit
-          const form = document.createElement('form');
-          form.method = 'POST';
-          form.action = data.paymentUrl;
+        Object.keys(data.paymentData).forEach(key => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = key;
+          input.value = data.paymentData[key];
+          form.appendChild(input);
+        });
 
-          Object.keys(data.paymentData).forEach(key => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = key;
-            input.value = data.paymentData[key];
-            form.appendChild(input);
-          });
-
-          document.body.appendChild(form);
-          form.submit();
-        }
+        document.body.appendChild(form);
+        toast.success('Opening eSewa payment gateway...', { id: 'payment' });
+        form.submit();
       }
     } catch (error) {
-      toast.error('Failed to initiate payment');
+      toast.error('Failed to initiate payment', { id: 'payment' });
+      console.error('Payment error:', error);
     }
   };
 
@@ -114,10 +99,7 @@ export default function Pricing() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-20">
       <div className="container mx-auto px-4">
         <h1 className="text-4xl font-bold text-center mb-4">Simple, Transparent Pricing</h1>
-        <p className="text-center text-gray-600 mb-4">Choose the plan that fits your needs</p>
-        <p className="text-center text-sm text-indigo-600 mb-12">
-          🧪 Development Mode: Mock payments enabled
-        </p>
+        <p className="text-center text-gray-600 mb-12">Choose the plan that fits your needs</p>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {plans.map((plan) => (
@@ -165,10 +147,13 @@ export default function Pricing() {
         </div>
 
         <div className="text-center mt-12">
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-2xl mx-auto">
-            <p className="text-sm text-yellow-800">
-              <strong>Development Mode:</strong> Payments are simulated. 
-              In production, real eSewa payments will be processed.
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-2xl mx-auto">
+            <p className="text-sm text-blue-800 mb-2">
+              <strong>Test Mode:</strong> Using eSewa test credentials (EPAYTEST). 
+              All payments will use test amount of <strong>NPR 100</strong>.
+            </p>
+            <p className="text-xs text-blue-700">
+              Test Credentials: ID: <strong>9806800001</strong> | Password: <strong>1122</strong> | Token: <strong>123456</strong>
             </p>
           </div>
         </div>

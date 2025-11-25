@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { Sparkles, Download, Save, ArrowLeft, Eye, X } from 'lucide-react';
+import { Sparkles, Download, Save, ArrowLeft, Eye, X, Trash2 } from 'lucide-react';
 import api from '../lib/api';
 import { useAuthStore } from '../store/authStore';
 import { downloadResumePDF } from '../utils/pdfGenerator';
@@ -16,7 +16,7 @@ export default function ResumeBuilder() {
   const [showPreview, setShowPreview] = useState(false);
   const [aiSuggestions, setAiSuggestions] = useState(null);
   const [resumeType, setResumeType] = useState('experienced'); // 'experienced' or 'fresher'
-  const { register, handleSubmit, setValue, watch } = useForm();
+  const { register, handleSubmit, setValue, watch, reset } = useForm();
 
   useEffect(() => {
     if (id) {
@@ -42,13 +42,21 @@ export default function ResumeBuilder() {
       if (!hasCredits) return;
     }
 
+    // Auto-generate title from full name if available
+    const resumeData = {
+      ...data,
+      title: data.personalInfo?.fullName 
+        ? `${data.personalInfo.fullName}'s Resume` 
+        : 'My Resume'
+    };
+
     setLoading(true);
     try {
       if (id) {
-        await api.put(`/resume/${id}`, data);
+        await api.put(`/resume/${id}`, resumeData);
         toast.success('Resume updated!');
       } else {
-        const response = await api.post('/resume', data);
+        const response = await api.post('/resume', resumeData);
         toast.success('Resume created!');
         navigate(`/resume/${response.data.resume._id}`);
       }
@@ -215,47 +223,83 @@ export default function ResumeBuilder() {
     
     try {
       const filename = `${resumeData.personalInfo.fullName.replace(/\s+/g, '_')}_Resume.pdf`;
-      downloadResumePDF(resumeData, filename);
-      toast.success('Resume downloaded successfully!');
+      toast.loading('Generating PDF...', { id: 'pdf-download' });
+      
+      // Small delay to ensure DOM is ready
+      setTimeout(() => {
+        downloadResumePDF(resumeData, filename);
+        toast.success('Resume downloaded successfully!', { id: 'pdf-download' });
+      }, 100);
     } catch (error) {
       console.error('PDF generation error:', error);
-      toast.error('Failed to generate PDF');
+      toast.error('Failed to generate PDF', { id: 'pdf-download' });
     }
   };
 
-  const handleCertificateUpload = async (event, index) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  const handleClearForm = () => {
+    const confirmed = window.confirm(
+      '⚠️ Are you sure you want to clear all form data?\n\nThis action cannot be undone.'
+    );
 
-    // Check file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('File size must be less than 5MB');
-      return;
-    }
-
-    // Check file type
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please upload an image file');
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('image', file);
-
-    try {
-      toast.loading('Uploading certificate...', { id: 'upload' });
-      
-      const { data } = await api.post('/upload/image', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+    if (confirmed) {
+      // Reset the entire form to completely empty state
+      reset({
+        personalInfo: {
+          fullName: '',
+          email: '',
+          phone: '',
+          location: '',
+          linkedin: '',
+          github: '',
+          website: ''
         },
+        summary: '',
+        experience: [{
+          company: '',
+          position: '',
+          startDate: '',
+          endDate: '',
+          current: false,
+          description: ['']
+        }],
+        education: [{
+          institution: '',
+          degree: '',
+          field: '',
+          startDate: '',
+          endDate: '',
+          gpa: ''
+        }],
+        skills: [{
+          items: ''
+        }],
+        projects: [{
+          name: '',
+          description: '',
+          technologies: '',
+          link: '',
+          github: ''
+        }],
+        certifications: [{
+          name: '',
+          issuer: '',
+          date: '',
+          link: ''
+        }]
       });
-
-      setValue(`certifications.${index}.imageUrl`, data.url);
-      toast.success('Certificate uploaded!', { id: 'upload' });
-    } catch (error) {
-      console.error('Upload error:', error);
-      toast.error('Failed to upload certificate', { id: 'upload' });
+      
+      // Clear AI suggestions
+      setAiSuggestions(null);
+      
+      // Reset resume type
+      setResumeType('experienced');
+      
+      // If editing an existing resume, navigate to new resume page
+      if (id) {
+        navigate('/resume/new');
+      }
+      
+      toast.success('Form cleared successfully!');
     }
   };
 
@@ -295,6 +339,14 @@ export default function ResumeBuilder() {
                   View AI Suggestions
                 </button>
               )}
+              <button
+                type="button"
+                onClick={handleClearForm}
+                className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+              >
+                <Trash2 className="w-4 h-4" />
+                Clear Form
+              </button>
             </div>
           </div>
 
@@ -354,6 +406,11 @@ export default function ResumeBuilder() {
             </div>
           )}
 
+          {/* Hidden Preview for PDF Generation */}
+          <div className="fixed -left-[9999px] top-0">
+            <ResumePreview resumeData={watch()} />
+          </div>
+
           {/* Preview Modal */}
           {showPreview && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -378,10 +435,7 @@ export default function ResumeBuilder() {
                     Close
                   </button>
                   <button
-                    onClick={() => {
-                      handleDownloadPDF();
-                      setShowPreview(false);
-                    }}
+                    onClick={handleDownloadPDF}
                     className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
                   >
                     <Download className="w-4 h-4" />
@@ -592,45 +646,16 @@ export default function ResumeBuilder() {
                   />
                   <input
                     {...register('certifications.0.date')}
-                    type="month"
-                    placeholder="Date Obtained"
+                    type="text"
+                    placeholder="Date (e.g., July 22 to August 13, 2024)"
                     className="px-4 py-2 border rounded-lg"
                   />
                 </div>
-                <div className="space-y-3">
-                  <input
-                    {...register('certifications.0.link')}
-                    placeholder="Certificate URL (e.g., Coursera certificate link)"
-                    className="w-full px-4 py-2 border rounded-lg"
-                  />
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Upload Certificate Image (Optional)
-                    </label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleCertificateUpload(e, 0)}
-                      className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-                    />
-                    {watch('certifications.0.imageUrl') && (
-                      <div className="mt-3">
-                        <img 
-                          src={watch('certifications.0.imageUrl')} 
-                          alt="Certificate" 
-                          className="max-w-xs rounded-lg shadow-md"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setValue('certifications.0.imageUrl', '')}
-                          className="mt-2 text-sm text-red-600 hover:text-red-700"
-                        >
-                          Remove Image
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <input
+                  {...register('certifications.0.link')}
+                  placeholder="Certificate URL (e.g., Coursera certificate link)"
+                  className="w-full px-4 py-2 border rounded-lg"
+                />
               </div>
             </section>
 
@@ -643,16 +668,38 @@ export default function ResumeBuilder() {
                   placeholder="Institution Name"
                   className="w-full px-4 py-2 border rounded-lg"
                 />
-                <input
-                  {...register('education.0.degree')}
-                  placeholder="Degree"
-                  className="w-full px-4 py-2 border rounded-lg"
-                />
-                <input
-                  {...register('education.0.field')}
-                  placeholder="Field of Study"
-                  className="w-full px-4 py-2 border rounded-lg"
-                />
+                <div className="grid md:grid-cols-2 gap-4">
+                  <input
+                    {...register('education.0.degree')}
+                    placeholder="Degree (e.g., Bachelor)"
+                    className="px-4 py-2 border rounded-lg"
+                  />
+                  <input
+                    {...register('education.0.field')}
+                    placeholder="Field of Study (e.g., Computer Science)"
+                    className="px-4 py-2 border rounded-lg"
+                  />
+                </div>
+                <div className="grid md:grid-cols-3 gap-4">
+                  <input
+                    {...register('education.0.startDate')}
+                    type="text"
+                    placeholder="Start Year (e.g., 2021)"
+                    className="px-4 py-2 border rounded-lg"
+                  />
+                  <input
+                    {...register('education.0.endDate')}
+                    type="text"
+                    placeholder="End Year (e.g., 2025)"
+                    className="px-4 py-2 border rounded-lg"
+                  />
+                  <input
+                    {...register('education.0.gpa')}
+                    type="text"
+                    placeholder="GPA (optional)"
+                    className="px-4 py-2 border rounded-lg"
+                  />
+                </div>
               </div>
             </section>
 
@@ -667,7 +714,7 @@ export default function ResumeBuilder() {
               <textarea
                 {...register('skills.0.items')}
                 rows="6"
-                placeholder="Enter skills with categories (one per line):&#10;Frontend: HTML, CSS, JavaScript, React.js&#10;Backend: Node.js, Express.js, MongoDB&#10;Tools: Git, GitHub, VS Code"
+                placeholder=""
                 className="w-full px-4 py-2 border rounded-lg font-mono text-sm"
               />
             </section>

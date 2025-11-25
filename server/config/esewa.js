@@ -1,4 +1,4 @@
-// eSewa Payment Configuration
+// eSewa Payment Configuration (API v2)
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -11,11 +11,11 @@ export const ESEWA_CONFIG = {
   successUrl: process.env.ESEWA_SUCCESS_URL || 'http://localhost:5173/payment/success',
   failureUrl: process.env.ESEWA_FAILURE_URL || 'http://localhost:5173/payment/failure',
   
-  // Payment Gateway URLs (using production URL for both - EPAYTEST works on production)
-  paymentUrl: 'https://esewa.com.np/epay/main',
+  // Payment Gateway URLs - eSewa API v2
+  paymentUrl: process.env.ESEWA_PAYMENT_URL || 'https://rc-epay.esewa.com.np/api/epay/main/v2/form',
   
-  // Verification URLs
-  verifyUrl: 'https://esewa.com.np/epay/transrec',
+  // Status Check URL
+  statusCheckUrl: process.env.ESEWA_PAYMENT_STATUS_CHECK_URL || 'https://rc.esewa.com.np/api/epay/transaction/status',
   
   // Environment
   environment: isProduction ? 'production' : 'test'

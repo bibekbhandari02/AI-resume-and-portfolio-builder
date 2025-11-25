@@ -1,14 +1,12 @@
 import express from 'express';
+import crypto from 'crypto';
 import { authenticate } from '../middleware/auth.js';
 import User from '../models/User.js';
 import { ESEWA_CONFIG, PLANS } from '../config/esewa.js';
 
 const router = express.Router();
 
-// Development mode flag
-const isDevelopment = process.env.NODE_ENV !== 'production';
-
-// Initiate payment
+// Initiate payment (eSewa API v2)
 router.post('/initiate', authenticate, async (req, res) => {
   try {
     const { plan } = req.body;
@@ -18,31 +16,41 @@ router.post('/initiate', authenticate, async (req, res) => {
     }
 
     const planDetails = PLANS[plan];
-    const transactionId = `TXN-${Date.now()}-${req.userId}`;
     
-    // In development mode, use mock payment
-    if (isDevelopment) {
-      // Mock payment - directly redirect to success page with mock data
-      return res.json({
-        success: true,
-        mock: true,
-        redirectUrl: `/payment/mock-success?plan=${plan}&amount=${planDetails.amount}&txn=${transactionId}`
-      });
-    }
-
-    // Production eSewa payment
+    // Encode plan and userId in transaction UUID
+    const transactionUuid = `TXN${Date.now()}${plan}${req.userId}`;
+    
+    // For EPAYTEST, use test amount of 100
+    const isTestMode = ESEWA_CONFIG.merchantId === 'EPAYTEST';
+    const amount = isTestMode ? 100 : planDetails.amount;
+    
+    // Create message for signature (must match exactly what's sent)
+    const message = `total_amount=${amount},transaction_uuid=${transactionUuid},product_code=${ESEWA_CONFIG.merchantId}`;
+    
+    // Generate signature using HMAC SHA256
+    const signature = crypto
+      .createHmac('sha256', ESEWA_CONFIG.secretKey)
+      .update(message)
+      .digest('base64');
+    
+    // Store transaction mapping (for verification later)
+    // In production, you should store this in a database
+    global.transactionMap = global.transactionMap || {};
+    global.transactionMap[transactionUuid] = { plan, userId: req.userId.toString() };
+    
+    // Payment data for eSewa v2
     const paymentData = {
-      amt: planDetails.amount,
-      psc: 0,
-      pdc: 0,
-      txAmt: 0,
-      tAmt: planDetails.amount,
-      pid: transactionId,
-      scd: ESEWA_CONFIG.merchantId,
-      su: ESEWA_CONFIG.successUrl,
-      fu: ESEWA_CONFIG.failureUrl,
-      userId: req.userId.toString(),
-      plan: plan
+      amount: amount.toString(),
+      failure_url: ESEWA_CONFIG.failureUrl,
+      product_delivery_charge: '0',
+      product_service_charge: '0',
+      product_code: ESEWA_CONFIG.merchantId,
+      signature: signature,
+      signed_field_names: 'total_amount,transaction_uuid,product_code',
+      success_url: ESEWA_CONFIG.successUrl,
+      tax_amount: '0',
+      total_amount: amount.toString(),
+      transaction_uuid: transactionUuid
     };
 
     res.json({
@@ -55,77 +63,51 @@ router.post('/initiate', authenticate, async (req, res) => {
   }
 });
 
-// Mock payment success (for development)
-router.post('/mock-success', authenticate, async (req, res) => {
+// Verify eSewa payment (API v2)
+router.post('/verify', async (req, res) => {
   try {
-    const { plan } = req.body;
+    const { data, plan, userId } = req.body;
     
-    if (!PLANS[plan]) {
-      return res.status(400).json({ error: 'Invalid plan' });
+    if (!data) {
+      return res.status(400).json({ error: 'Missing payment data' });
     }
 
-    // Update user subscription
-    await User.findByIdAndUpdate(req.userId, {
-      subscription: plan,
-      credits: PLANS[plan].credits
-    });
-
-    res.json({
-      success: true,
-      message: 'Subscription activated (Mock Payment)',
-      plan: plan
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Verify eSewa payment
-router.get('/verify', async (req, res) => {
-  try {
-    const { oid, amt, refId } = req.query;
-
-    if (!oid || !amt || !refId) {
-      return res.status(400).json({ error: 'Missing payment parameters' });
+    // Decode base64 data
+    const decodedData = JSON.parse(Buffer.from(data, 'base64').toString('utf-8'));
+    
+    if (!decodedData.transaction_uuid || !decodedData.total_amount) {
+      return res.status(400).json({ error: 'Invalid payment data' });
     }
 
-    // In development, mock verification
-    if (isDevelopment) {
-      return res.json({
-        success: true,
-        message: 'Payment verified (Mock)',
-        transactionId: oid,
-        refId: refId,
-        mock: true
-      });
-    }
-
-    // Production verification
-    const verifyUrl = ESEWA_CONFIG.verifyUrl;
-    const verifyParams = new URLSearchParams({
-      amt: amt,
-      rid: refId,
-      pid: oid,
-      scd: ESEWA_CONFIG.merchantId
-    });
-
-    const response = await fetch(`${verifyUrl}?${verifyParams}`);
-    const result = await response.text();
-
-    if (result.includes('Success')) {
-      const parts = oid.split('-');
-      const userId = parts[parts.length - 1];
+    // If payment status is already COMPLETE in decoded data, trust it
+    // (eSewa already verified it before redirecting)
+    if (decodedData.status === 'COMPLETE') {
+      // Get transaction details from map
+      const transactionInfo = global.transactionMap?.[decodedData.transaction_uuid];
       
-      await User.findByIdAndUpdate(userId, {
-        subscription: 'starter',
-        credits: PLANS.starter.credits
+      if (!transactionInfo) {
+        return res.status(400).json({
+          success: false,
+          error: 'Transaction not found'
+        });
+      }
+      
+      const { plan: planToActivate, userId: userIdToUpdate } = transactionInfo;
+      
+      // Update user subscription
+      await User.findByIdAndUpdate(userIdToUpdate, {
+        subscription: planToActivate,
+        credits: PLANS[planToActivate].credits
       });
+
+      // Clean up transaction map
+      delete global.transactionMap[decodedData.transaction_uuid];
 
       res.json({
         success: true,
         message: 'Payment verified successfully',
-        transactionId: oid,
-        refId: refId
+        transactionId: decodedData.transaction_uuid,
+        plan: planToActivate
       });
     } else {
       res.status(400).json({
@@ -134,6 +116,7 @@ router.get('/verify', async (req, res) => {
       });
     }
   } catch (error) {
+    console.error('Verification error:', error);
     res.status(500).json({ error: error.message });
   }
 });

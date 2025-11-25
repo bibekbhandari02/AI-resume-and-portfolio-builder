@@ -2,237 +2,283 @@ export default function ResumePreview({ resumeData }) {
   if (!resumeData) return null;
 
   return (
-    <div className="bg-white p-8 shadow-lg" style={{ width: '210mm', minHeight: '297mm' }}>
-      {/* Header */}
-      {resumeData.personalInfo?.fullName && (
-        <div className="mb-6 border-b-2 border-indigo-600 pb-4">
-          <h1 className="text-3xl font-bold text-indigo-600 mb-2">
-            {resumeData.personalInfo.fullName}
-          </h1>
-          <div className="text-sm text-gray-600 space-y-1">
-            {resumeData.personalInfo.email && (
-              <div>{resumeData.personalInfo.email}</div>
-            )}
-            {resumeData.personalInfo.phone && (
-              <span>{resumeData.personalInfo.phone}</span>
-            )}
-            {resumeData.personalInfo.location && (
-              <span> | {resumeData.personalInfo.location}</span>
-            )}
-            {(resumeData.personalInfo.linkedin || resumeData.personalInfo.github) && (
-              <div className="flex gap-4">
+    <>
+      <style>{`
+        .resume-container {
+          width: 210mm;
+          min-height: 297mm;
+          padding: 19mm;
+          font-family: Calibri, Arial, sans-serif;
+          color: #000000;
+          font-size: 11pt;
+          line-height: 1.15;
+          background: white;
+        }
+        .resume-name {
+          font-size: 20pt;
+          font-weight: bold;
+          color: #000000;
+          margin-bottom: 6px;
+          text-align: left;
+        }
+        .resume-contact {
+          font-size: 11pt;
+          color: #000000;
+          line-height: 1.15;
+          margin-bottom: 4px;
+        }
+        .resume-links {
+          display: flex;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+        .resume-link {
+          color: #0066cc;
+          text-decoration: underline;
+        }
+        .resume-section {
+          margin-bottom: 14px;
+        }
+        .resume-section-title {
+          font-size: 14pt;
+          font-weight: bold;
+          color: #000000;
+          margin-bottom: 6px;
+          padding-bottom: 3px;
+          border-bottom: 1px solid #000000;
+        }
+        .resume-text {
+          font-size: 11pt;
+          color: #000000;
+          line-height: 1.15;
+          margin-top: 6px;
+          text-align: justify;
+        }
+        .resume-job-title {
+          font-size: 12pt;
+          font-weight: bold;
+          color: #000000;
+        }
+        .resume-date {
+          font-size: 11pt;
+          color: #000000;
+          white-space: nowrap;
+          margin-left: 10px;
+        }
+        .resume-list {
+          margin: 4px 0 0 20px;
+          padding: 0;
+          list-style-type: disc;
+        }
+        .resume-list-item {
+          font-size: 11pt;
+          color: #000000;
+          line-height: 1.15;
+          margin-bottom: 4px;
+          text-align: justify;
+        }
+      `}</style>
+      
+      <div className="resume-container bg-white shadow-lg" data-resume-preview>
+        {/* Header */}
+        {resumeData.personalInfo?.fullName && (
+          <div style={{ marginBottom: '12px' }}>
+            <h1 className="resume-name">
+              {resumeData.personalInfo.fullName.toUpperCase()}
+            </h1>
+            <div className="resume-contact">
+              {[
+                resumeData.personalInfo.email,
+                resumeData.personalInfo.phone,
+                resumeData.personalInfo.location
+              ].filter(Boolean).join(' | ')}
+            </div>
+            {(resumeData.personalInfo.linkedin || resumeData.personalInfo.github || resumeData.personalInfo.website) && (
+              <div className="resume-links">
                 {resumeData.personalInfo.linkedin && (
-                  <a href={resumeData.personalInfo.linkedin} className="text-indigo-600 hover:underline">
+                  <a href={resumeData.personalInfo.linkedin} className="resume-link">
                     LinkedIn
                   </a>
                 )}
                 {resumeData.personalInfo.github && (
-                  <a href={resumeData.personalInfo.github} className="text-indigo-600 hover:underline">
+                  <a href={resumeData.personalInfo.github} className="resume-link">
                     GitHub
+                  </a>
+                )}
+                {resumeData.personalInfo.website && (
+                  <a href={resumeData.personalInfo.website} className="resume-link">
+                    Website
                   </a>
                 )}
               </div>
             )}
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Summary */}
-      {resumeData.summary && (
-        <div className="mb-6">
-          <h2 className="text-lg font-bold text-gray-800 mb-2 border-b border-gray-300">
-            PROFESSIONAL SUMMARY
-          </h2>
-          <p className="text-gray-700 text-sm">{resumeData.summary}</p>
-        </div>
-      )}
-
-      {/* Experience */}
-      {resumeData.experience && resumeData.experience.length > 0 && resumeData.experience[0]?.company && (
-        <div className="mb-6">
-          <h2 className="text-lg font-bold text-gray-800 mb-2 border-b border-gray-300">
-            WORK EXPERIENCE
-          </h2>
-          {resumeData.experience.map((exp, index) => (
-            exp.company && (
-              <div key={index} className="mb-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-bold text-gray-800">{exp.position}</h3>
-                    <p className="text-gray-600 text-sm">{exp.company}</p>
-                  </div>
-                  <span className="text-sm text-gray-500">
-                    {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
-                  </span>
-                </div>
-                {exp.description && exp.description.length > 0 && (
-                  <ul className="mt-2 space-y-1 text-sm text-gray-700">
-                    {exp.description.map((desc, i) => (
-                      desc && <li key={i} className="ml-4">• {desc}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            )
-          ))}
-        </div>
-      )}
-
-      {/* Education */}
-      {resumeData.education && resumeData.education.length > 0 && resumeData.education[0]?.institution && (
-        <div className="mb-6">
-          <h2 className="text-lg font-bold text-gray-800 mb-2 border-b border-gray-300">
-            EDUCATION
-          </h2>
-          {resumeData.education.map((edu, index) => (
-            edu.institution && (
-              <div key={index} className="mb-3">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-bold text-gray-800">
-                      {edu.degree} {edu.field && `in ${edu.field}`}
-                    </h3>
-                    <p className="text-gray-600 text-sm">{edu.institution}</p>
-                  </div>
-                  <span className="text-sm text-gray-500">
-                    {edu.startDate} - {edu.endDate}
-                  </span>
-                </div>
-                {edu.gpa && (
-                  <p className="text-sm text-gray-600 mt-1">GPA: {edu.gpa}</p>
-                )}
-              </div>
-            )
-          ))}
-        </div>
-      )}
-
-      {/* Skills */}
-      {resumeData.skills && resumeData.skills.length > 0 && resumeData.skills[0]?.items && (
-        <div className="mb-6">
-          <h2 className="text-lg font-bold text-gray-800 mb-2 border-b border-gray-300">
-            SKILLS
-          </h2>
-          <div className="space-y-2">
-            {resumeData.skills.map((skillGroup, index) => {
-              // Parse skills if they contain categories (e.g., "Frontend: HTML, CSS")
-              const skillsText = Array.isArray(skillGroup.items) 
-                ? skillGroup.items.join(', ') 
-                : skillGroup.items;
-              
-              // Check if skills contain category format
-              const categoryMatch = skillsText?.match(/^([^:]+):\s*(.+)$/);
-              
-              if (categoryMatch) {
-                return (
-                  <div key={index} className="mb-2">
-                    <span className="font-semibold text-gray-800">{categoryMatch[1]}: </span>
-                    <span className="text-gray-700 text-sm">{categoryMatch[2]}</span>
-                  </div>
-                );
-              }
-              
-              // If there's a category field, use it
-              if (skillGroup.category) {
-                return (
-                  <div key={index} className="mb-2">
-                    <span className="font-semibold text-gray-800">{skillGroup.category}: </span>
-                    <span className="text-gray-700 text-sm">{skillsText}</span>
-                  </div>
-                );
-              }
-              
-              // Otherwise, split by common patterns
-              const skillLines = skillsText?.split(/(?:Frontend:|Backend:|Programming Languages:|Tools & Platforms:|Data Analysis)/i)
-                .filter(line => line.trim());
-              
-              if (skillLines && skillLines.length > 1) {
-                const categories = skillsText.match(/(?:Frontend|Backend|Programming Languages|Tools & Platforms|Data Analysis)[^:]*:/gi);
-                return categories?.map((cat, i) => (
-                  <div key={`${index}-${i}`} className="mb-2">
-                    <span className="font-semibold text-gray-800">{cat} </span>
-                    <span className="text-gray-700 text-sm">{skillLines[i]?.trim()}</span>
-                  </div>
-                ));
-              }
-              
-              // Default: show as is
-              return (
-                <div key={index} className="mb-2">
-                  <span className="text-gray-700 text-sm">{skillsText}</span>
-                </div>
-              );
-            })}
+        {/* Professional Summary */}
+        {resumeData.summary && (
+          <div className="resume-section">
+            <h2 className="resume-section-title">PROFESSIONAL SUMMARY</h2>
+            <p className="resume-text">{resumeData.summary}</p>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Projects */}
-      {resumeData.projects && resumeData.projects.length > 0 && resumeData.projects[0]?.name && (
-        <div className="mb-6">
-          <h2 className="text-lg font-bold text-gray-800 mb-2 border-b border-gray-300">
-            PROJECTS
-          </h2>
-          {resumeData.projects.map((project, index) => (
-            project.name && (
-              <div key={index} className="mb-3">
-                <h3 className="font-bold text-gray-800">{project.name}</h3>
-                {project.description && (
-                  <p className="text-sm text-gray-700 mt-1">{project.description}</p>
-                )}
-                {project.technologies && project.technologies.length > 0 && (
-                  <p className="text-xs text-gray-600 mt-1">
-                    Technologies: {Array.isArray(project.technologies) ? project.technologies.join(', ') : project.technologies}
-                  </p>
-                )}
-              </div>
-            )
-          ))}
-        </div>
-      )}
+        {/* Skills */}
+        {resumeData.skills && resumeData.skills.length > 0 && resumeData.skills[0]?.items && (
+          <div className="resume-section">
+            <h2 className="resume-section-title">SKILLS</h2>
+            <div style={{ marginTop: '6px' }}>
+              {resumeData.skills.map((skillGroup, index) => {
+                const skillsText = Array.isArray(skillGroup.items) 
+                  ? skillGroup.items.join(', ') 
+                  : skillGroup.items;
+                
+                const lines = skillsText?.split('\n').filter(line => line.trim());
+                
+                if (lines && lines.length > 0) {
+                  return lines.map((line, lineIndex) => {
+                    const categoryMatch = line.match(/^([^:]+):\s*(.+)$/);
+                    
+                    if (categoryMatch) {
+                      return (
+                        <div key={`${index}-${lineIndex}`} style={{ fontSize: '11pt', marginBottom: '4px', lineHeight: '1.15' }}>
+                          <span style={{ fontWeight: 'bold', color: '#000000' }}>{categoryMatch[1]}: </span>
+                          <span style={{ color: '#000000' }}>{categoryMatch[2]}</span>
+                        </div>
+                      );
+                    }
+                    
+                    return (
+                      <div key={`${index}-${lineIndex}`} style={{ fontSize: '11pt', color: '#000000', marginBottom: '4px', lineHeight: '1.15' }}>
+                        {line}
+                      </div>
+                    );
+                  });
+                }
+                
+                return null;
+              })}
+            </div>
+          </div>
+        )}
 
-      {/* Certifications */}
-      {resumeData.certifications && resumeData.certifications.length > 0 && resumeData.certifications[0]?.name && (
-        <div className="mb-6">
-          <h2 className="text-lg font-bold text-gray-800 mb-2 border-b border-gray-300">
-            CERTIFICATIONS
-          </h2>
-          {resumeData.certifications.map((cert, index) => (
-            cert.name && (
-              <div key={index} className="mb-3">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <h3 className="font-bold text-gray-800">{cert.name}</h3>
-                    {cert.issuer && (
-                      <p className="text-sm text-gray-600">{cert.issuer}</p>
-                    )}
-                    {cert.date && (
-                      <p className="text-xs text-gray-500">{cert.date}</p>
-                    )}
-                    {cert.link && (
-                      <a 
-                        href={cert.link} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-xs text-indigo-600 hover:underline"
-                      >
-                        View Certificate →
-                      </a>
-                    )}
+        {/* Experience */}
+        {resumeData.experience && resumeData.experience.length > 0 && resumeData.experience[0]?.company && (
+          <div className="resume-section">
+            <h2 className="resume-section-title">WORK EXPERIENCE</h2>
+            {resumeData.experience.map((exp, index) => (
+              exp.company && (
+                <div key={index} style={{ marginTop: '10px', marginBottom: '10px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
+                    <span className="resume-job-title">{exp.position}</span>
+                    <span className="resume-date">{exp.startDate} - {exp.current ? 'Present' : exp.endDate}</span>
                   </div>
-                  {cert.imageUrl && (
-                    <img 
-                      src={cert.imageUrl} 
-                      alt={cert.name}
-                      className="w-24 h-24 object-cover rounded border ml-4"
-                    />
+                  <div style={{ fontSize: '11pt', color: '#000000', marginBottom: '4px' }}>
+                    {exp.company}
+                  </div>
+                  {exp.description && exp.description.length > 0 && (
+                    <ul className="resume-list">
+                      {exp.description.map((desc, i) => (
+                        desc && <li key={i} className="resume-list-item">{desc}</li>
+                      ))}
+                    </ul>
                   )}
                 </div>
-              </div>
-            )
-          ))}
-        </div>
-      )}
-    </div>
+              )
+            ))}
+          </div>
+        )}
+
+        {/* Projects */}
+        {resumeData.projects && resumeData.projects.length > 0 && resumeData.projects[0]?.name && (
+          <div className="resume-section">
+            <h2 className="resume-section-title">PROJECTS</h2>
+            {resumeData.projects.map((project, index) => (
+              project.name && (
+                <div key={index} style={{ marginTop: '10px', marginBottom: '10px' }}>
+                  <div className="resume-job-title" style={{ marginBottom: '4px' }}>
+                    {project.name}
+                  </div>
+                  {project.description && (
+                    <ul className="resume-list">
+                      <li className="resume-list-item">{project.description}</li>
+                    </ul>
+                  )}
+                  {project.technologies && (
+                    <div style={{ fontSize: '11pt', color: '#000000', marginTop: '4px' }}>
+                      <span style={{ fontWeight: 'bold' }}>Tech Stack: </span>
+                      {Array.isArray(project.technologies) ? project.technologies.join(', ') : project.technologies}
+                    </div>
+                  )}
+                  {(project.link || project.github) && (
+                    <div style={{ fontSize: '11pt', marginTop: '4px', display: 'flex', gap: '10px' }}>
+                      {project.link && (
+                        <a href={project.link} className="resume-link">Live Demo</a>
+                      )}
+                      {project.github && (
+                        <a href={project.github} className="resume-link">GitHub</a>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )
+            ))}
+          </div>
+        )}
+
+        {/* Education */}
+        {resumeData.education && resumeData.education.length > 0 && resumeData.education[0]?.institution && (
+          <div className="resume-section">
+            <h2 className="resume-section-title">EDUCATION</h2>
+            {resumeData.education.map((edu, index) => (
+              edu.institution && (
+                <div key={index} style={{ marginTop: '10px', marginBottom: '8px' }}>
+                  <div className="resume-job-title" style={{ marginBottom: '4px' }}>
+                    {edu.degree}{edu.field ? ` in ${edu.field}` : ''}
+                  </div>
+                  <div style={{ fontSize: '11pt', color: '#000000', marginBottom: '4px' }}>
+                    {edu.institution}
+                    {(edu.startDate || edu.endDate) && (
+                      <span>, {edu.startDate}-{edu.endDate}</span>
+                    )}
+                  </div>
+                  {edu.gpa && (
+                    <div style={{ fontSize: '11pt', color: '#000000' }}>
+                      GPA: {edu.gpa}
+                    </div>
+                  )}
+                </div>
+              )
+            ))}
+          </div>
+        )}
+
+        {/* Certifications */}
+        {resumeData.certifications && resumeData.certifications.length > 0 && resumeData.certifications[0]?.name && (
+          <div className="resume-section">
+            <h2 className="resume-section-title">CERTIFICATIONS</h2>
+            {resumeData.certifications.map((cert, index) => (
+              cert.name && (
+                <div key={index} style={{ marginTop: '8px', marginBottom: '8px' }}>
+                  <div style={{ fontSize: '11pt', fontWeight: 'bold', color: '#000000', marginBottom: '2px' }}>
+                    {cert.name} - {cert.issuer || ''}
+                  </div>
+                  {cert.date && (
+                    <div style={{ fontSize: '11pt', color: '#000000', marginBottom: '2px' }}>
+                      {cert.date}
+                    </div>
+                  )}
+                  {cert.link && (
+                    <div style={{ fontSize: '11pt' }}>
+                      <a href={cert.link} className="resume-link">View Certificate</a>
+                    </div>
+                  )}
+                </div>
+              )
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   );
 }
