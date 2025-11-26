@@ -9,6 +9,13 @@ const router = express.Router();
 // Initiate payment (eSewa API v2)
 router.post('/initiate', authenticate, async (req, res) => {
   try {
+    // Check if payments are enabled
+    if (process.env.PAYMENTS_ENABLED === 'false') {
+      return res.status(403).json({ 
+        error: 'Payments are temporarily disabled. Please contact support for premium access.' 
+      });
+    }
+    
     const { plan } = req.body;
     
     if (!PLANS[plan]) {
