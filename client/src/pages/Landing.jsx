@@ -29,7 +29,7 @@ export default function Landing() {
           </h1>
           
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 mb-6 sm:mb-8 lg:mb-10 max-w-3xl mx-auto leading-relaxed px-4">
-            Create ATS-friendly resumes and stunning portfolio websites in minutes. 
+            Create ATS-friendly resumes, stunning portfolio websites, and personalized cover letters in minutes. 
             Powered by AI to help you stand out and land your dream job.
           </p>
           
@@ -158,7 +158,7 @@ export default function Landing() {
             Ready to Build Your Future?
           </h2>
           <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto px-4">
-            Start creating professional resumes and portfolios today. No credit card required.
+            Start creating professional resumes, portfolios, and cover letters today. No credit card required.
           </p>
           <Link 
             to="/register" 

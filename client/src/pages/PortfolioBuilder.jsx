@@ -18,6 +18,7 @@ export default function PortfolioBuilder() {
   const [uploadingProjectImage, setUploadingProjectImage] = useState({});
   const [showAIModal, setShowAIModal] = useState(false);
   const [aiPrompt, setAiPrompt] = useState('');
+  const [showAllThemes, setShowAllThemes] = useState(false);
   const { register, handleSubmit, setValue, watch, control } = useForm({
     defaultValues: {
       subdomain: '',
@@ -481,107 +482,75 @@ export default function PortfolioBuilder() {
               <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Color Theme</h2>
               <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">Choose a color scheme for your portfolio</p>
               
-              {/* Mobile: Vertical scrollable grid */}
-              <div className="lg:hidden max-h-[400px] overflow-y-auto pr-2">
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { name: 'Purple & Pink', from: '#a855f7', to: '#ec4899', value: 'purple-pink' },
-                    { name: 'Ocean Blue', from: '#3b82f6', to: '#06b6d4', value: 'blue-cyan' },
-                    { name: 'Forest Green', from: '#22c55e', to: '#14b8a6', value: 'green-teal' },
-                    { name: 'Sunset Fire', from: '#f97316', to: '#ef4444', value: 'orange-red' },
-                    { name: 'Royal Indigo', from: '#6366f1', to: '#a855f7', value: 'indigo-purple' },
-                    { name: 'Rose Garden', from: '#ec4899', to: '#f43f5e', value: 'pink-rose' },
-                    { name: 'Golden Sun', from: '#eab308', to: '#f97316', value: 'yellow-orange' },
-                    { name: 'Emerald Forest', from: '#10b981', to: '#22c55e', value: 'emerald-green' },
-                    { name: 'Violet Dream', from: '#8b5cf6', to: '#d946ef', value: 'violet-fuchsia' },
-                    { name: 'Sky Blue', from: '#0ea5e9', to: '#38bdf8', value: 'sky-blue' },
-                    { name: 'Lime Fresh', from: '#84cc16', to: '#a3e635', value: 'lime-green' },
-                    { name: 'Amber Glow', from: '#f59e0b', to: '#fbbf24', value: 'amber-yellow' },
-                    { name: 'Crimson Red', from: '#dc2626', to: '#ef4444', value: 'red-crimson' },
-                    { name: 'Slate Gray', from: '#64748b', to: '#94a3b8', value: 'slate-gray' },
-                    { name: 'Mint Turquoise', from: '#2dd4bf', to: '#5eead4', value: 'mint-turquoise' },
-                    { name: 'Coral Peach', from: '#fb7185', to: '#fda4af', value: 'coral-peach' },
-                    { name: 'Navy Blue', from: '#1e40af', to: '#3b82f6', value: 'navy-blue' },
-                    { name: 'Magenta Purple', from: '#c026d3', to: '#e879f9', value: 'magenta-purple' },
-                  ].map((theme) => (
-                    <button
-                      key={theme.value}
-                      type="button"
-                      onClick={() => setValue('colorTheme', theme.value)}
-                      className={`relative p-3 rounded-lg border-2 transition-all flex-shrink-0 ${
-                        watch('colorTheme') === theme.value
-                          ? 'border-indigo-600 ring-2 ring-indigo-200'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div 
-                        className="h-10 rounded-md mb-2"
-                        style={{ backgroundImage: `linear-gradient(to right, ${theme.from}, ${theme.to})` }}
-                      ></div>
-                      <p className="text-[10px] font-medium text-center leading-tight">{theme.name}</p>
-                      {watch('colorTheme') === theme.value && (
-                        <div className="absolute top-2 right-2 w-4 h-4 bg-indigo-600 rounded-full flex items-center justify-center">
-                          <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Desktop: Horizontal scrollable */}
-              <div className="hidden lg:block">
-                <div className="overflow-x-auto pb-4">
-                  <div className="flex gap-4 min-w-max">
-                    {[
-                      { name: 'Purple & Pink', from: '#a855f7', to: '#ec4899', value: 'purple-pink' },
-                      { name: 'Ocean Blue', from: '#3b82f6', to: '#06b6d4', value: 'blue-cyan' },
-                      { name: 'Forest Green', from: '#22c55e', to: '#14b8a6', value: 'green-teal' },
-                      { name: 'Sunset Fire', from: '#f97316', to: '#ef4444', value: 'orange-red' },
-                      { name: 'Royal Indigo', from: '#6366f1', to: '#a855f7', value: 'indigo-purple' },
-                      { name: 'Rose Garden', from: '#ec4899', to: '#f43f5e', value: 'pink-rose' },
-                      { name: 'Golden Sun', from: '#eab308', to: '#f97316', value: 'yellow-orange' },
-                      { name: 'Emerald Forest', from: '#10b981', to: '#22c55e', value: 'emerald-green' },
-                      { name: 'Violet Dream', from: '#8b5cf6', to: '#d946ef', value: 'violet-fuchsia' },
-                      { name: 'Sky Blue', from: '#0ea5e9', to: '#38bdf8', value: 'sky-blue' },
-                      { name: 'Lime Fresh', from: '#84cc16', to: '#a3e635', value: 'lime-green' },
-                      { name: 'Amber Glow', from: '#f59e0b', to: '#fbbf24', value: 'amber-yellow' },
-                      { name: 'Crimson Red', from: '#dc2626', to: '#ef4444', value: 'red-crimson' },
-                      { name: 'Slate Gray', from: '#64748b', to: '#94a3b8', value: 'slate-gray' },
-                      { name: 'Mint Turquoise', from: '#2dd4bf', to: '#5eead4', value: 'mint-turquoise' },
-                      { name: 'Coral Peach', from: '#fb7185', to: '#fda4af', value: 'coral-peach' },
-                      { name: 'Navy Blue', from: '#1e40af', to: '#3b82f6', value: 'navy-blue' },
-                      { name: 'Magenta Purple', from: '#c026d3', to: '#e879f9', value: 'magenta-purple' },
-                    ].map((theme) => (
-                      <button
-                        key={theme.value}
-                        type="button"
-                        onClick={() => setValue('colorTheme', theme.value)}
-                        className={`relative p-4 rounded-lg border-2 transition-all flex-shrink-0 w-32 ${
-                          watch('colorTheme') === theme.value
-                            ? 'border-indigo-600 ring-2 ring-indigo-200'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        <div 
-                          className="h-12 rounded-md mb-2"
-                          style={{ backgroundImage: `linear-gradient(to right, ${theme.from}, ${theme.to})` }}
-                        ></div>
-                        <p className="text-xs font-medium text-center leading-tight">{theme.name}</p>
-                        {watch('colorTheme') === theme.value && (
-                          <div className="absolute top-2 right-2 w-5 h-5 bg-indigo-600 rounded-full flex items-center justify-center">
-                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                          </div>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              {(() => {
+                const allThemes = [
+                  { name: 'Purple & Pink', from: '#a855f7', to: '#ec4899', value: 'purple-pink' },
+                  { name: 'Ocean Blue', from: '#3b82f6', to: '#06b6d4', value: 'blue-cyan' },
+                  { name: 'Forest Green', from: '#22c55e', to: '#14b8a6', value: 'green-teal' },
+                  { name: 'Sunset Fire', from: '#f97316', to: '#ef4444', value: 'orange-red' },
+                  { name: 'Royal Indigo', from: '#6366f1', to: '#a855f7', value: 'indigo-purple' },
+                  { name: 'Rose Garden', from: '#ec4899', to: '#f43f5e', value: 'pink-rose' },
+                  { name: 'Golden Sun', from: '#eab308', to: '#f97316', value: 'yellow-orange' },
+                  { name: 'Emerald Forest', from: '#10b981', to: '#22c55e', value: 'emerald-green' },
+                  { name: 'Violet Dream', from: '#8b5cf6', to: '#d946ef', value: 'violet-fuchsia' },
+                  { name: 'Sky Blue', from: '#0ea5e9', to: '#38bdf8', value: 'sky-blue' },
+                  { name: 'Lime Fresh', from: '#84cc16', to: '#a3e635', value: 'lime-green' },
+                  { name: 'Amber Glow', from: '#f59e0b', to: '#fbbf24', value: 'amber-yellow' },
+                  { name: 'Crimson Red', from: '#dc2626', to: '#ef4444', value: 'red-crimson' },
+                  { name: 'Slate Gray', from: '#64748b', to: '#94a3b8', value: 'slate-gray' },
+                  { name: 'Mint Turquoise', from: '#2dd4bf', to: '#5eead4', value: 'mint-turquoise' },
+                  { name: 'Coral Peach', from: '#fb7185', to: '#fda4af', value: 'coral-peach' },
+                  { name: 'Navy Blue', from: '#1e40af', to: '#3b82f6', value: 'navy-blue' },
+                  { name: 'Magenta Purple', from: '#c026d3', to: '#e879f9', value: 'magenta-purple' },
+                ];
+                
+                const INITIAL_THEME_COUNT = 8;
+                const displayedThemes = showAllThemes ? allThemes : allThemes.slice(0, INITIAL_THEME_COUNT);
+                
+                return (
+                  <>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                      {displayedThemes.map((theme) => (
+                        <button
+                          key={theme.value}
+                          type="button"
+                          onClick={() => setValue('colorTheme', theme.value)}
+                          className={`relative p-3 sm:p-4 rounded-lg border-2 transition-all ${
+                            watch('colorTheme') === theme.value
+                              ? 'border-indigo-600 ring-2 ring-indigo-200'
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div 
+                            className="h-10 sm:h-12 rounded-md mb-2"
+                            style={{ backgroundImage: `linear-gradient(to right, ${theme.from}, ${theme.to})` }}
+                          ></div>
+                          <p className="text-[10px] sm:text-xs font-medium text-center leading-tight">{theme.name}</p>
+                          {watch('colorTheme') === theme.value && (
+                            <div className="absolute top-2 right-2 w-4 h-4 sm:w-5 sm:h-5 bg-indigo-600 rounded-full flex items-center justify-center">
+                              <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                    
+                    {allThemes.length > INITIAL_THEME_COUNT && (
+                      <div className="mt-4 sm:mt-6 text-center">
+                        <button
+                          type="button"
+                          onClick={() => setShowAllThemes(!showAllThemes)}
+                          className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 bg-white text-purple-600 border-2 border-purple-600 rounded-lg hover:bg-purple-50 transition-colors font-medium text-sm sm:text-base"
+                        >
+                          {showAllThemes ? 'Show Less' : `Show All Themes (${allThemes.length})`}
+                        </button>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
             </section>
 
             {/* Hero Section */}
