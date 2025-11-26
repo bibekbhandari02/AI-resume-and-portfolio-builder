@@ -23,7 +23,8 @@ const userSchema = new mongoose.Schema({
   },
   credits: {
     resumeGenerations: { type: Number, default: 5 },
-    portfolios: { type: Number, default: 1 }
+    portfolios: { type: Number, default: 1 },
+    coverLetters: { type: Number, default: 3 }
   },
   stripeCustomerId: String,
   stripeSubscriptionId: String,

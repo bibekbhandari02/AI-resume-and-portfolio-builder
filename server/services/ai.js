@@ -129,10 +129,11 @@ ${!hasExperience ? '**Tips for Freshers**\n[Specific advice to stand out]' : ''}
   }
 };
 
-export const generateCoverLetter = async (jobTitle, resumeData) => {
+export const generateCoverLetter = async (jobTitle, resumeData, companyName = '') => {
+  const companyText = companyName ? ` at ${companyName}` : '';
   const prompt = `You are a professional cover letter writer.
 
-Write a professional cover letter for the position: ${jobTitle}.
+Write a professional cover letter for the position: ${jobTitle}${companyText}.
 
 Use the following resume data and customize it to match the role.
 
@@ -140,8 +141,10 @@ Resume: ${JSON.stringify(resumeData)}
 
 Keep it:
 - 3 short paragraphs
-- Personalized
-- ATS friendly`;
+- Personalized and enthusiastic
+- ATS friendly
+- Professional tone
+- Highlight relevant experience and skills from the resume`;
 
   try {
     return await callGeminiAPI(prompt);
@@ -149,7 +152,7 @@ Keep it:
     if (process.env.NODE_ENV !== 'production') {
       return `Dear Hiring Manager,
 
-I am writing to express my strong interest in the ${jobTitle} position. With my background in ${resumeData.experience?.[0]?.position || 'software development'} and proven track record of success, I am confident I would be a valuable addition to your team.
+I am writing to express my strong interest in the ${jobTitle} position${companyText}. With my background in ${resumeData.experience?.[0]?.position || 'software development'} and proven track record of success, I am confident I would be a valuable addition to your team.
 
 In my current role at ${resumeData.experience?.[0]?.company || 'my current company'}, I have successfully delivered multiple projects and consistently exceeded expectations. My technical skills combined with my problem-solving abilities make me an ideal candidate for this position.
 

@@ -11,6 +11,7 @@ import portfolioRoutes from './routes/portfolio.js';
 import aiRoutes from './routes/ai.js';
 import paymentRoutes from './routes/payment.js';
 import uploadRoutes from './routes/upload.js';
+import coverLetterRoutes from './routes/coverLetter.js';
 
 dotenv.config();
 
@@ -57,6 +58,7 @@ app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/cover-letter', coverLetterRoutes);
 
 // Root route
 app.get('/', (req, res) => {
@@ -70,7 +72,8 @@ app.get('/', (req, res) => {
       portfolio: '/api/portfolio',
       ai: '/api/ai',
       payment: '/api/payment',
-      upload: '/api/upload'
+      upload: '/api/upload',
+      coverLetter: '/api/cover-letter'
     }
   });
 });

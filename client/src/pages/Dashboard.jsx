@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FileText, Globe, Plus, CreditCard, Sparkles, Trash2 } from 'lucide-react';
+import { FileText, Globe, Plus, CreditCard, Sparkles, Trash2, Mail } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import api from '../lib/api';
 import toast from 'react-hot-toast';
@@ -9,6 +9,7 @@ export default function Dashboard() {
   const { user, updateUser } = useAuthStore();
   const [resumes, setResumes] = useState([]);
   const [portfolios, setPortfolios] = useState([]);
+  const [coverLetters, setCoverLetters] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -17,13 +18,15 @@ export default function Dashboard() {
 
   const fetchData = async () => {
     try {
-      const [resumesRes, portfoliosRes, userRes] = await Promise.all([
+      const [resumesRes, portfoliosRes, coverLettersRes, userRes] = await Promise.all([
         api.get('/resume'),
         api.get('/portfolio'),
+        api.get('/cover-letter'),
         api.get('/user/me')
       ]);
       setResumes(resumesRes.data.resumes);
       setPortfolios(portfoliosRes.data.portfolios);
+      setCoverLetters(coverLettersRes.data.coverLetters);
       updateUser(userRes.data.user);
     } catch (error) {
       console.error('Failed to fetch data', error);
@@ -73,6 +76,26 @@ export default function Dashboard() {
     }
   };
 
+  const handleDeleteCoverLetter = async (e, coverLetterId, jobTitle) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const confirmed = window.confirm(
+      `Are you sure you want to delete cover letter for "${jobTitle}"?\n\nThis action cannot be undone.`
+    );
+    
+    if (!confirmed) return;
+    
+    try {
+      await api.delete(`/cover-letter/${coverLetterId}`);
+      toast.success('Cover letter deleted successfully');
+      setCoverLetters(coverLetters.filter(c => c._id !== coverLetterId));
+    } catch (error) {
+      toast.error('Failed to delete cover letter');
+      console.error('Delete error:', error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -96,7 +119,7 @@ export default function Dashboard() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8 lg:mb-10">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8 lg:mb-10">
           <div className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white p-4 sm:p-5 lg:p-6 rounded-lg shadow-lg">
             <div className="flex items-center justify-between mb-1 sm:mb-2">
               <h3 className="text-white/80 text-xs sm:text-sm">Subscription</h3>
@@ -125,22 +148,33 @@ export default function Dashboard() {
           </div>
           <div className="bg-white p-4 sm:p-5 lg:p-6 rounded-lg shadow">
             <div className="flex items-center justify-between mb-1 sm:mb-2">
+              <h3 className="text-gray-600 text-xs sm:text-sm">Cover Letter Credits</h3>
+              <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
+            </div>
+            <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{user?.credits?.coverLetters || 0}</p>
+          </div>
+          <div className="bg-white p-4 sm:p-5 lg:p-6 rounded-lg shadow">
+            <div className="flex items-center justify-between mb-1 sm:mb-2">
               <h3 className="text-gray-600 text-xs sm:text-sm">Total Resumes</h3>
-              <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
+              <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" />
             </div>
             <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{resumes.length}</p>
           </div>
         </div>
 
         {/* Quick Actions */}
-        <div className="grid sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6 mb-8 sm:mb-10 lg:mb-12">
+        <div className="grid sm:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 mb-8 sm:mb-10 lg:mb-12">
           <Link to="/resume/new" className="bg-indigo-600 text-white p-5 sm:p-6 lg:p-8 rounded-lg hover:bg-indigo-700 flex items-center justify-center gap-2 sm:gap-3 transition-colors">
             <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
-            <span className="text-base sm:text-lg lg:text-xl font-semibold">Create New Resume</span>
+            <span className="text-base sm:text-lg lg:text-xl font-semibold">Create Resume</span>
           </Link>
           <Link to="/portfolio/new" className="bg-purple-600 text-white p-5 sm:p-6 lg:p-8 rounded-lg hover:bg-purple-700 flex items-center justify-center gap-2 sm:gap-3 transition-colors">
             <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
             <span className="text-base sm:text-lg lg:text-xl font-semibold">Create Portfolio</span>
+          </Link>
+          <Link to="/cover-letter/new" className="bg-green-600 text-white p-5 sm:p-6 lg:p-8 rounded-lg hover:bg-green-700 flex items-center justify-center gap-2 sm:gap-3 transition-colors">
+            <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
+            <span className="text-base sm:text-lg lg:text-xl font-semibold">Create Cover Letter</span>
           </Link>
         </div>
 
@@ -188,7 +222,7 @@ export default function Dashboard() {
         </section>
 
         {/* Portfolios */}
-        <section className="mb-6 sm:mb-8">
+        <section className="mb-8 sm:mb-10 lg:mb-12">
           <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900">Your Portfolios</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
             {portfolios.length === 0 ? (
@@ -211,6 +245,43 @@ export default function Dashboard() {
                       onClick={(e) => handleDeletePortfolio(e, portfolio._id, portfolioName)}
                       className="absolute top-2 right-2 bg-red-500 text-white p-1.5 sm:p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
                       title="Delete portfolio"
+                    >
+                      <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    </button>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </section>
+
+        {/* Cover Letters */}
+        <section className="mb-6 sm:mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900">Your Cover Letters</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
+            {coverLetters.length === 0 ? (
+              <p className="text-gray-500 col-span-full text-sm sm:text-base">No cover letters yet. Create your first one!</p>
+            ) : (
+              coverLetters.map((coverLetter) => {
+                return (
+                  <div key={coverLetter._id} className="relative group">
+                    <Link
+                      to={`/cover-letter/${coverLetter._id}`}
+                      className="bg-white p-4 sm:p-5 lg:p-6 rounded-lg shadow hover:shadow-lg transition block"
+                    >
+                      <Mail className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-green-600 mb-2" />
+                      <h3 className="font-semibold text-sm sm:text-base truncate">{coverLetter.jobTitle}</h3>
+                      {coverLetter.companyName && (
+                        <p className="text-xs sm:text-sm text-gray-600">{coverLetter.companyName}</p>
+                      )}
+                      <p className="text-xs sm:text-sm text-gray-500">
+                        Updated {new Date(coverLetter.updatedAt).toLocaleDateString()}
+                      </p>
+                    </Link>
+                    <button
+                      onClick={(e) => handleDeleteCoverLetter(e, coverLetter._id, coverLetter.jobTitle)}
+                      className="absolute top-2 right-2 bg-red-500 text-white p-1.5 sm:p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                      title="Delete cover letter"
                     >
                       <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </button>

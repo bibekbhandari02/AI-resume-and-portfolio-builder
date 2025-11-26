@@ -18,8 +18,20 @@ router.post('/enhance-resume', authenticate, async (req, res) => {
 // Generate cover letter
 router.post('/cover-letter', authenticate, async (req, res) => {
   try {
-    const { jobTitle, resumeData } = req.body;
-    const coverLetter = await generateCoverLetter(jobTitle, resumeData);
+    const { jobTitle, companyName, resumeData } = req.body;
+    
+    // Check credits for free users
+    if (req.user.subscription === 'free') {
+      if (req.user.credits.coverLetters <= 0) {
+        return res.status(403).json({ error: 'No cover letter credits remaining' });
+      }
+      
+      // Deduct credit
+      req.user.credits.coverLetters -= 1;
+      await req.user.save();
+    }
+    
+    const coverLetter = await generateCoverLetter(jobTitle, resumeData, companyName);
     res.json({ coverLetter });
   } catch (error) {
     res.status(500).json({ error: error.message });
