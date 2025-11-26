@@ -1001,9 +1001,141 @@ export default function PortfolioView() {
       </section>
 
       {/* Footer */}
-      <footer className="relative py-8 px-6 text-center text-gray-500 border-t border-gray-800 z-10">
-        <p>© {new Date().getFullYear()} {content.hero?.title}. All rights reserved.</p>
-        <p className="text-sm mt-2">Built with ResumeAI Portfolio Builder</p>
+      <footer className="relative py-6 text-gray-400 border-t border-gray-800 z-10">
+        <div className="px-6 md:px-12">
+          {/* Top Section */}
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-6">
+            <div className="flex flex-col lg:max-w-lg">
+              <button
+                onClick={scrollToTop}
+                className="mb-4 hover:opacity-80 transition-opacity cursor-pointer text-left"
+              >
+                {portfolio.logoUrl ? (
+                  <img
+                    src={portfolio.logoUrl}
+                    alt="Logo"
+                    className="w-[120px] md:w-[140px] lg:w-[150px]"
+                  />
+                ) : (
+                  (() => {
+                    const logoText = portfolio.logoText || content.hero?.title?.split(' ')[0] || 'Logo';
+                    const firstLetter = logoText[0]?.toUpperCase() || 'L';
+                    const restOfWord = logoText.slice(1)?.toLowerCase() || 'ogo';
+                    
+                    return (
+                      <svg 
+                        width="150" 
+                        height="48" 
+                        viewBox="0 0 150 48" 
+                        fill="none" 
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-[120px] md:w-[140px] lg:w-[150px]"
+                      >
+                        <defs>
+                          <linearGradient id="footerLogoGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style={{ stopColor: 'var(--theme-primary)', stopOpacity: 1 }} />
+                            <stop offset="100%" style={{ stopColor: 'var(--theme-secondary)', stopOpacity: 1 }} />
+                          </linearGradient>
+                          <filter id="footerGlow">
+                            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                            <feMerge>
+                              <feMergeNode in="coloredBlur"/>
+                              <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                          </filter>
+                        </defs>
+                        <text 
+                          x="5" 
+                          y="32" 
+                          fontSize="32" 
+                          fontWeight="800" 
+                          fill="url(#footerLogoGradient)"
+                          fontFamily="system-ui, -apple-system, sans-serif"
+                          filter="url(#footerGlow)"
+                          letterSpacing="-1"
+                        >
+                          {firstLetter}
+                        </text>
+                        <text 
+                          x="30" 
+                          y="32" 
+                          fontSize="24" 
+                          fontWeight="600" 
+                          fill="white" 
+                          fontFamily="system-ui, -apple-system, sans-serif"
+                          letterSpacing="0.5"
+                        >
+                          {restOfWord}
+                        </text>
+                      </svg>
+                    );
+                  })()
+                )}
+              </button>
+              <p className="text-base leading-relaxed text-gray-400">
+                {content.hero?.description || "Let's connect and create something amazing together."}
+              </p>
+            </div>
+
+            {/* Social Icons */}
+            <div className="flex gap-6 text-white">
+              {content.contact?.github && (
+                <a
+                  href={content.contact.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="GitHub"
+                  className="transition-transform transform hover:scale-110 hover:text-[#c9510c] hover:drop-shadow-md"
+                >
+                  <Github size={28} />
+                </a>
+              )}
+              {content.contact?.linkedin && (
+                <a
+                  href={content.contact.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn"
+                  className="transition-transform transform hover:scale-110 hover:text-[#0077b5] hover:drop-shadow-md"
+                >
+                  <Linkedin size={28} />
+                </a>
+              )}
+            </div>
+          </div>
+
+          <hr className="border-gray-700 mb-10" />
+
+          {/* Bottom Section */}
+          <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
+            {/* Navigation Links */}
+            <div className="flex gap-4 md:gap-6 text-sm flex-wrap justify-center text-gray-400">
+              <button
+                onClick={() => scrollToSection('about')}
+                className="hover:text-gray-200 cursor-pointer transition-colors"
+              >
+                About
+              </button>
+              <button
+                onClick={() => scrollToSection('projects')}
+                className="hover:text-gray-200 cursor-pointer transition-colors"
+              >
+                Projects
+              </button>
+              <button
+                onClick={() => scrollToSection('contact')}
+                className="hover:text-gray-200 cursor-pointer transition-colors"
+              >
+                Connect with me
+              </button>
+            </div>
+
+            {/* Copyright */}
+            <div className="text-sm text-gray-500">
+              © {new Date().getFullYear()} {content.hero?.title || 'Portfolio'}. All rights reserved.
+            </div>
+          </div>
+        </div>
       </footer>
 
       {/* Scroll to Top Button */}

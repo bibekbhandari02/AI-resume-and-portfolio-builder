@@ -1,5 +1,68 @@
 import { Mail, Github, Linkedin } from 'lucide-react';
 import { getThemeColors, applyThemeVariables } from '../utils/portfolioThemes';
+import {
+  FaHtml5,
+  FaCss3Alt,
+  FaReact,
+  FaNodeJs,
+  FaGithub,
+  FaDatabase,
+  FaJava,
+  FaPython,
+  FaPhp,
+  FaDocker,
+  FaAws,
+  FaVuejs,
+  FaAngular,
+  FaSass,
+  FaBootstrap,
+  FaGitAlt,
+  FaLinux,
+  FaNpm,
+  FaYarn,
+  FaFigma,
+  FaSwift,
+  FaAndroid,
+  FaApple,
+  FaInfinity,
+} from 'react-icons/fa';
+import {
+  SiJavascript,
+  SiMongodb,
+  SiExpress,
+  SiNextdotjs,
+  SiTailwindcss,
+  SiTypescript,
+  SiRedux,
+  SiPostgresql,
+  SiMysql,
+  SiRedis,
+  SiFirebase,
+  SiDjango,
+  SiFlask,
+  SiSpring,
+  SiLaravel,
+  SiRubyonrails,
+  SiGo,
+  SiRust,
+  SiCplusplus,
+  SiKubernetes,
+  SiGooglecloud,
+  SiGitlab,
+  SiJenkins,
+  SiNginx,
+  SiFlutter,
+  SiKotlin,
+  SiGraphql,
+  SiJest,
+  SiWebpack,
+  SiVite,
+  SiPostman,
+  SiVercel,
+  SiNetlify,
+  SiHeroku,
+} from 'react-icons/si';
+import { TbBrandReactNative, TbBrandCSharp } from 'react-icons/tb';
 
 export default function PortfolioPreview({ data }) {
   const { content, profileImageUrl, logoUrl, logoText, colorTheme } = data;
@@ -10,6 +73,85 @@ export default function PortfolioPreview({ data }) {
   const displayLogoText = logoText || content.hero?.title?.split(' ')[0] || 'Logo';
   const firstLetter = displayLogoText[0]?.toUpperCase() || 'L';
   const restOfWord = displayLogoText.slice(1)?.toLowerCase() || 'ogo';
+
+  const getSkillIcon = (skill) => {
+    const skillLower = skill.toLowerCase();
+    
+    // Frontend
+    if (skillLower.includes('react native')) return <TbBrandReactNative className="text-cyan-400" />;
+    if (skillLower.includes('react')) return <FaReact className="text-cyan-400" />;
+    if (skillLower.includes('vue')) return <FaVuejs className="text-green-500" />;
+    if (skillLower.includes('angular')) return <FaAngular className="text-red-600" />;
+    if (skillLower.includes('html')) return <FaHtml5 className="text-orange-500" />;
+    if (skillLower.includes('css')) return <FaCss3Alt className="text-blue-500" />;
+    if (skillLower.includes('javascript') || skillLower.includes('js')) return <SiJavascript className="text-yellow-400" />;
+    if (skillLower.includes('typescript') || skillLower.includes('ts')) return <SiTypescript className="text-blue-600" />;
+    if (skillLower.includes('tailwind')) return <SiTailwindcss className="text-teal-400" />;
+    if (skillLower.includes('bootstrap')) return <FaBootstrap className="text-purple-600" />;
+    if (skillLower.includes('sass') || skillLower.includes('scss')) return <FaSass className="text-pink-500" />;
+    if (skillLower.includes('next')) return <SiNextdotjs className="text-white" />;
+    if (skillLower.includes('redux')) return <SiRedux className="text-purple-500" />;
+    if (skillLower.includes('vite')) return <SiVite className="text-purple-400" />;
+    if (skillLower.includes('webpack')) return <SiWebpack className="text-blue-400" />;
+    
+    // Backend
+    if (skillLower.includes('node')) return <FaNodeJs className="text-green-500" />;
+    if (skillLower.includes('express')) return <SiExpress className="text-white" />;
+    if (skillLower.includes('python')) return <FaPython className="text-[#3776AB]" />;
+    if (skillLower.includes('django')) return <SiDjango className="text-green-700" />;
+    if (skillLower.includes('flask')) return <SiFlask className="text-white" />;
+    if (skillLower.includes('java')) return <FaJava className="text-orange-400" />;
+    if (skillLower.includes('spring')) return <SiSpring className="text-green-500" />;
+    if (skillLower.includes('php')) return <FaPhp className="text-indigo-300" />;
+    if (skillLower.includes('laravel')) return <SiLaravel className="text-red-600" />;
+    if (skillLower.includes('ruby') || skillLower.includes('rails')) return <SiRubyonrails className="text-red-500" />;
+    if (skillLower.includes('rust')) return <SiRust className="text-orange-600" />;
+    if (skillLower.includes('c++')) return <SiCplusplus className="text-blue-500" />;
+    if (skillLower.includes('c#')) return <TbBrandCSharp className="text-purple-600" />;
+    
+    // Database
+    if (skillLower.includes('mongodb')) return <SiMongodb className="text-green-500" />;
+    if (skillLower.includes('go') || skillLower.includes('golang')) return <SiGo className="text-cyan-400" />;
+    if (skillLower.includes('mysql')) return <SiMysql className="text-blue-500" />;
+    if (skillLower.includes('postgresql') || skillLower.includes('postgres')) return <SiPostgresql className="text-blue-400" />;
+    if (skillLower.includes('redis')) return <SiRedis className="text-red-500" />;
+    if (skillLower.includes('firebase')) return <SiFirebase className="text-yellow-500" />;
+    if (skillLower.includes('sql') || skillLower.includes('database')) return <FaDatabase className="text-purple-400" />;
+    
+    // DevOps & Tools
+    if (skillLower.includes('docker')) return <FaDocker className="text-blue-500" />;
+    if (skillLower.includes('kubernetes') || skillLower.includes('k8s')) return <SiKubernetes className="text-blue-600" />;
+    if (skillLower.includes('aws')) return <FaAws className="text-orange-400" />;
+    if (skillLower.includes('azure')) return <FaAws className="text-blue-500" />;
+    if (skillLower.includes('gcp') || skillLower.includes('google cloud')) return <SiGooglecloud className="text-blue-400" />;
+    if (skillLower.includes('github')) return <FaGithub className="text-white" />;
+    if (skillLower.includes('gitlab')) return <SiGitlab className="text-orange-600" />;
+    if (skillLower.includes('git')) return <FaGitAlt className="text-orange-500" />;
+    if (skillLower.includes('jenkins')) return <SiJenkins className="text-red-500" />;
+    if (skillLower.includes('ci/cd') || skillLower.includes('cicd')) return <FaInfinity className="text-blue-400" />;
+    if (skillLower.includes('linux')) return <FaLinux className="text-yellow-400" />;
+    if (skillLower.includes('nginx')) return <SiNginx className="text-green-500" />;
+    if (skillLower.includes('npm')) return <FaNpm className="text-red-600" />;
+    if (skillLower.includes('yarn')) return <FaYarn className="text-blue-400" />;
+    if (skillLower.includes('vercel')) return <SiVercel className="text-white" />;
+    if (skillLower.includes('netlify')) return <SiNetlify className="text-teal-400" />;
+    if (skillLower.includes('heroku')) return <SiHeroku className="text-purple-600" />;
+    if (skillLower.includes('postman')) return <SiPostman className="text-orange-500" />;
+    
+    // Mobile
+    if (skillLower.includes('flutter')) return <SiFlutter className="text-blue-400" />;
+    if (skillLower.includes('kotlin')) return <SiKotlin className="text-purple-500" />;
+    if (skillLower.includes('swift')) return <FaSwift className="text-orange-500" />;
+    if (skillLower.includes('android')) return <FaAndroid className="text-green-500" />;
+    if (skillLower.includes('ios')) return <FaApple className="text-white" />;
+    
+    // Other
+    if (skillLower.includes('graphql')) return <SiGraphql className="text-pink-500" />;
+    if (skillLower.includes('jest')) return <SiJest className="text-red-600" />;
+    if (skillLower.includes('figma')) return <FaFigma className="text-purple-500" />;
+    
+    return null;
+  };
 
   return (
     <div 
@@ -163,14 +305,18 @@ export default function PortfolioPreview({ data }) {
                 <div key={index} className="bg-[#1f1f1f] p-2 rounded-lg border border-gray-800">
                   <p className="text-xs font-semibold text-gray-300 mb-1">{skillGroup.category}</p>
                   <div className="flex flex-wrap gap-1">
-                    {skillItems.slice(0, 4).map((skill, idx) => (
-                      <span
-                        key={idx}
-                        className="px-2 py-0.5 text-xs rounded bg-[#2a2a2a] text-white"
-                      >
-                        {skill}
-                      </span>
-                    ))}
+                    {skillItems.slice(0, 4).map((skill, idx) => {
+                      const icon = getSkillIcon(skill);
+                      return (
+                        <span
+                          key={idx}
+                          className="px-2 py-0.5 text-xs rounded bg-[#2a2a2a] text-white flex items-center gap-1"
+                        >
+                          {icon && <span className="text-sm">{icon}</span>}
+                          {skill}
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
               );
