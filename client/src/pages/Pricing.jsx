@@ -102,13 +102,23 @@ export default function Pricing() {
         <h1 className="text-4xl font-bold text-center mb-4">Simple, Transparent Pricing</h1>
         <p className="text-center text-gray-600 mb-12">Choose the plan that fits your needs</p>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {plans.map((plan) => (
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto relative">
+          {/* Gradient Background */}
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-100 via-indigo-100 to-purple-200 rounded-2xl opacity-50 blur-3xl -z-10"></div>
+          
+          {plans.map((plan, index) => (
             <div
               key={plan.name}
-              className={`bg-white rounded-xl shadow-lg p-8 ${
-                plan.popular ? 'ring-2 ring-indigo-600 relative' : ''
-              }`}
+              className={`bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-8 ${
+                plan.popular ? 'ring-2 ring-indigo-600 relative transform scale-105' : ''
+              } hover:shadow-2xl transition-all duration-300`}
+              style={{
+                background: index === 0 
+                  ? 'linear-gradient(135deg, #f3f4f6 0%, #ffffff 100%)' 
+                  : index === 1 
+                  ? 'linear-gradient(135deg, #e0e7ff 0%, #ffffff 100%)'
+                  : 'linear-gradient(135deg, #faf5ff 0%, #f3e8ff 50%, #e9d5ff 100%)'
+              }}
             >
               {plan.popular && (
                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
@@ -135,8 +145,10 @@ export default function Pricing() {
 
               <button
                 onClick={() => handleSubscribe(plan.plan)}
-                className={`w-full py-3 rounded-lg font-semibold ${
-                  plan.popular
+                className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 ${
+                  plan.name === 'Pro'
+                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 shadow-lg hover:shadow-xl'
+                    : plan.popular
                     ? 'bg-indigo-600 text-white hover:bg-indigo-700'
                     : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
                 }`}
