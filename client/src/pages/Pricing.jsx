@@ -42,7 +42,8 @@ export default function Pricing() {
         form.submit();
       }
     } catch (error) {
-      toast.error('Failed to initiate payment', { id: 'payment' });
+      const errorMessage = error.response?.data?.error || 'Failed to initiate payment';
+      toast.error(errorMessage, { id: 'payment' });
       console.error('Payment error:', error);
     }
   };
