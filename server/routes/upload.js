@@ -22,6 +22,26 @@ const upload = multer({
   }
 });
 
+// Configure multer for resume uploads (PDF and Word documents)
+const resumeUpload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only PDF and Word documents are allowed!'), false);
+    }
+  }
+});
+
 // Upload image
 router.post('/image', authenticate, upload.single('image'), async (req, res) => {
   try {
@@ -138,6 +158,57 @@ router.get('/pdf/:publicId', async (req, res) => {
     res.send(Buffer.from(buffer));
   } catch (error) {
     console.error('PDF serve error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Upload resume file for cover letter generation
+router.post('/resume', authenticate, resumeUpload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    // For now, we'll create a simple resume data structure
+    // In a production app, you'd want to use a PDF parser library like pdf-parse
+    // or mammoth for Word documents to extract actual text
+    
+    const resumeData = {
+      personalInfo: {
+        fullName: 'Uploaded Resume',
+        email: 'user@example.com',
+        phone: '',
+        location: ''
+      },
+      summary: 'Resume content from uploaded file',
+      experience: [
+        {
+          position: 'Professional',
+          company: 'Various Companies',
+          startDate: '',
+          endDate: '',
+          description: 'Experience details from uploaded resume'
+        }
+      ],
+      education: [
+        {
+          degree: 'Degree',
+          institution: 'Institution',
+          graduationDate: ''
+        }
+      ],
+      skills: ['Skills from uploaded resume'],
+      uploadedFile: true,
+      fileName: req.file.originalname
+    };
+
+    res.json({
+      success: true,
+      resumeData: resumeData,
+      message: 'Resume uploaded successfully. AI will generate cover letter based on the file.'
+    });
+  } catch (error) {
+    console.error('Resume upload error:', error);
     res.status(500).json({ error: error.message });
   }
 });

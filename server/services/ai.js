@@ -129,8 +129,10 @@ ${!hasExperience ? '**Tips for Freshers**\n[Specific advice to stand out]' : ''}
   }
 };
 
-export const generateCoverLetter = async (jobTitle, resumeData, companyName = '') => {
+export const generateCoverLetter = async (jobTitle, resumeData, companyName = '', hiringManager = '') => {
   const companyText = companyName ? ` at ${companyName}` : '';
+  const greeting = hiringManager ? `Dear ${hiringManager}` : 'Dear Hiring Manager';
+  
   const prompt = `You are a professional cover letter writer.
 
 Write a professional cover letter for the position: ${jobTitle}${companyText}.
@@ -139,18 +141,20 @@ Use the following resume data and customize it to match the role.
 
 Resume: ${JSON.stringify(resumeData)}
 
-Keep it:
-- 3 short paragraphs
-- Personalized and enthusiastic
-- ATS friendly
-- Professional tone
-- Highlight relevant experience and skills from the resume`;
+Important:
+- Start with: "${greeting},"
+- Write 3 short paragraphs
+- Be personalized and enthusiastic
+- Make it ATS friendly
+- Use professional tone
+- Highlight relevant experience and skills from the resume
+- End with "Sincerely," followed by the candidate's name`;
 
   try {
     return await callGeminiAPI(prompt);
   } catch (error) {
     if (process.env.NODE_ENV !== 'production') {
-      return `Dear Hiring Manager,
+      return `${greeting},
 
 I am writing to express my strong interest in the ${jobTitle} position${companyText}. With my background in ${resumeData.experience?.[0]?.position || 'software development'} and proven track record of success, I am confident I would be a valuable addition to your team.
 

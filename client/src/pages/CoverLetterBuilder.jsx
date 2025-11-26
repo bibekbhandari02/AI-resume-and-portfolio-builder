@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Sparkles, Save, FileText, Download } from 'lucide-react';
+import { ArrowLeft, Sparkles, Save, FileText, Download, Upload } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import api from '../lib/api';
 import toast from 'react-hot-toast';
@@ -12,6 +12,7 @@ export default function CoverLetterBuilder() {
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const [formData, setFormData] = useState({
     jobTitle: '',
@@ -22,6 +23,7 @@ export default function CoverLetterBuilder() {
   });
 
   const [resumes, setResumes] = useState([]);
+  const [uploadedResumeFile, setUploadedResumeFile] = useState(null);
 
   useEffect(() => {
     fetchResumes();
@@ -51,14 +53,53 @@ export default function CoverLetterBuilder() {
     }
   };
 
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword'];
+    if (!validTypes.includes(file.type)) {
+      toast.error('Please upload a PDF or Word document');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File size must be less than 5MB');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append('file', file);
+
+      const { data } = await api.post('/upload/resume', formDataUpload, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      setUploadedResumeFile(data.resumeData);
+      setFormData(prev => ({ ...prev, resumeId: '' })); // Clear selected resume
+      toast.success('Resume uploaded successfully!');
+    } catch (error) {
+      toast.error('Failed to upload resume');
+      console.error('Upload error:', error);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleGenerate = async () => {
     if (!formData.jobTitle) {
       toast.error('Please enter a job title');
       return;
     }
 
-    if (!formData.resumeId) {
-      toast.error('Please select a resume');
+    if (!formData.resumeId && !uploadedResumeFile) {
+      toast.error('Please select or upload a resume');
       return;
     }
 
@@ -70,11 +111,18 @@ export default function CoverLetterBuilder() {
 
     setGenerating(true);
     try {
-      const selectedResume = resumes.find(r => r._id === formData.resumeId);
+      let resumeData;
+      if (uploadedResumeFile) {
+        resumeData = uploadedResumeFile;
+      } else {
+        resumeData = resumes.find(r => r._id === formData.resumeId);
+      }
+
       const { data } = await api.post('/ai/cover-letter', {
         jobTitle: formData.jobTitle,
         companyName: formData.companyName,
-        resumeData: selectedResume
+        hiringManager: formData.hiringManager,
+        resumeData: resumeData
       });
 
       setFormData(prev => ({ ...prev, content: data.coverLetter }));
@@ -223,21 +271,84 @@ export default function CoverLetterBuilder() {
                 </label>
                 <select
                   value={formData.resumeId}
-                  onChange={(e) => setFormData({ ...formData, resumeId: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  onChange={(e) => {
+                    setFormData({ ...formData, resumeId: e.target.value });
+                    setUploadedResumeFile(null); // Clear uploaded file when selecting from list
+                  }}
+                  disabled={uploadedResumeFile !== null}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
                   <option value="">Choose a resume...</option>
-                  {resumes.map((resume) => (
-                    <option key={resume._id} value={resume._id}>
-                      {resume.personalInfo?.fullName || 'Untitled Resume'}
-                    </option>
-                  ))}
+                  {resumes.map((resume, index) => {
+                    const name = resume.personalInfo?.fullName || 'Untitled';
+                    const template = resume.template ? ` - ${resume.template.charAt(0).toUpperCase() + resume.template.slice(1)}` : '';
+                    const date = new Date(resume.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                    const displayName = `${name}${template} (${date})`;
+                    
+                    return (
+                      <option key={resume._id} value={resume._id}>
+                        {displayName}
+                      </option>
+                    );
+                  })}
                 </select>
+              </div>
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500">OR</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Upload Resume File
+                </label>
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    onChange={handleFileUpload}
+                    disabled={uploading || formData.resumeId !== ''}
+                    className="hidden"
+                    id="resume-upload"
+                  />
+                  <label
+                    htmlFor="resume-upload"
+                    className={`flex items-center justify-center gap-2 w-full px-4 py-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
+                      uploading || formData.resumeId !== ''
+                        ? 'border-gray-300 bg-gray-100 cursor-not-allowed'
+                        : 'border-gray-300 hover:border-indigo-500 bg-white'
+                    }`}
+                  >
+                    <Upload className="w-5 h-5 text-gray-400" />
+                    <span className="text-sm text-gray-600">
+                      {uploading ? 'Uploading...' : uploadedResumeFile ? 'Resume Uploaded ✓' : 'Click to upload PDF or Word'}
+                    </span>
+                  </label>
+                </div>
+                {uploadedResumeFile && (
+                  <div className="mt-2 flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                    <span className="text-sm text-green-700">Resume uploaded successfully</span>
+                    <button
+                      onClick={() => setUploadedResumeFile(null)}
+                      className="text-red-600 hover:text-red-700 text-sm font-medium"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
+                <p className="text-xs text-gray-500 mt-1">
+                  Supported formats: PDF, DOC, DOCX (Max 5MB)
+                </p>
               </div>
 
               <button
                 onClick={handleGenerate}
-                disabled={generating || !formData.jobTitle || !formData.resumeId}
+                disabled={generating || !formData.jobTitle || (!formData.resumeId && !uploadedResumeFile)}
                 className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
               >
                 <Sparkles className="w-5 h-5" />
