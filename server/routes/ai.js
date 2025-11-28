@@ -30,7 +30,7 @@ router.post('/enhance-resume', authenticate, aiRateLimiter, async (req, res) => 
 // Generate cover letter with streaming support
 router.post('/cover-letter', authenticate, aiRateLimiter, async (req, res) => {
   try {
-    const { jobTitle, companyName, hiringManager, customPrompt, resumeData } = req.body;
+    const { jobTitle, companyName, hiringManager, customPrompt, resumeData, jobDescription, tone } = req.body;
     
     // Validate required fields
     if (!jobTitle || !resumeData) {
@@ -45,7 +45,7 @@ router.post('/cover-letter', authenticate, aiRateLimiter, async (req, res) => {
     }
     
     // Generate cover letter
-    const coverLetter = await generateCoverLetter(jobTitle, resumeData, companyName, hiringManager, customPrompt);
+    const coverLetter = await generateCoverLetter(jobTitle, resumeData, companyName, hiringManager, customPrompt, jobDescription, tone);
     
     // Only deduct credit AFTER successful generation
     if (req.user.subscription === 'free') {

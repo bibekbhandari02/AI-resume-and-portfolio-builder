@@ -300,27 +300,27 @@ export default function PortfolioBuilder() {
   const portfolioData = watch();
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-6 lg:py-8">
+      <div className="container mx-auto px-3 sm:px-4 lg:px-6 max-w-7xl">
         <div className="grid lg:grid-cols-3 gap-4 lg:gap-6">
           {/* Main Form */}
-          <div className="lg:col-span-2 bg-white rounded-lg shadow-lg p-4 sm:p-6 lg:p-8">
+          <div className="lg:col-span-2 bg-white rounded-lg shadow-lg p-3 sm:p-4 lg:p-6">
           {/* Header */}
-          <div className="flex flex-col gap-4 mb-6">
-            <div className="flex items-center gap-3">
-              <Link to="/dashboard" className="text-gray-600 hover:text-gray-900">
+          <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Link to="/dashboard" className="text-gray-600 hover:text-gray-900 p-1">
                 <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
               </Link>
-              <div className="flex-1">
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">Portfolio Builder</h1>
+              <div className="flex-1 min-w-0">
+                <h1 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold truncate">Portfolio Builder</h1>
                 {id && (
                   <div className="flex items-center gap-2 mt-1">
                     {watch('published') ? (
-                      <span className="text-xs sm:text-sm px-2 py-1 bg-green-100 text-green-700 rounded">
+                      <span className="text-xs sm:text-sm px-2 py-0.5 sm:py-1 bg-green-100 text-green-700 rounded font-medium">
                         ✓ Published
                       </span>
                     ) : (
-                      <span className="text-xs sm:text-sm px-2 py-1 bg-yellow-100 text-yellow-700 rounded">
+                      <span className="text-xs sm:text-sm px-2 py-0.5 sm:py-1 bg-yellow-100 text-yellow-700 rounded font-medium">
                         Draft
                       </span>
                     )}
@@ -332,35 +332,35 @@ export default function PortfolioBuilder() {
               <button
                 onClick={() => setShowAIModal(true)}
                 disabled={generating}
-                className="flex items-center justify-center gap-2 bg-purple-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-purple-700 disabled:opacity-50 text-sm sm:text-base flex-1 sm:flex-initial min-w-[140px]"
+                className="flex items-center justify-center gap-1.5 sm:gap-2 bg-purple-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-purple-700 disabled:opacity-50 text-xs sm:text-sm lg:text-base flex-1 sm:flex-initial min-w-[120px] sm:min-w-[140px]"
               >
-                <Sparkles className="w-4 h-4" />
+                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 <span className="whitespace-nowrap">{generating ? 'Generating...' : 'AI Generate'}</span>
               </button>
               <button
                 onClick={() => setShowPreview(!showPreview)}
-                className="flex items-center justify-center gap-2 bg-gray-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-gray-700 text-sm sm:text-base flex-1 sm:flex-initial min-w-[100px]"
+                className="flex items-center justify-center gap-1.5 sm:gap-2 bg-gray-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-gray-700 text-xs sm:text-sm lg:text-base flex-1 sm:flex-initial min-w-[90px] sm:min-w-[100px]"
               >
-                <Eye className="w-4 h-4" />
+                <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 <span className="whitespace-nowrap">{showPreview ? 'Hide' : 'Preview'}</span>
               </button>
             </div>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6 lg:space-y-8">
             {/* Logo & Profile Picture Upload */}
             <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
               <section>
-                <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Logo</h2>
-                <div className="space-y-3">
+                <h2 className="text-base sm:text-lg lg:text-xl font-semibold mb-2 sm:mb-3">Logo</h2>
+                <div className="space-y-2 sm:space-y-3">
                   <div>
-                    <label className="block text-sm font-medium mb-2">Logo Text (Optional)</label>
+                    <label className="block text-xs sm:text-sm font-medium mb-1.5 sm:mb-2">Logo Text (Optional)</label>
                     <input
                       {...register('logoText')}
                       placeholder="e.g., Finesse, YourBrand"
                       className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
                     />
-                    <p className="text-xs text-gray-500 mt-1">Custom text for your SVG logo. Leave empty to use your name.</p>
+                    <p className="text-[10px] sm:text-xs text-gray-500 mt-1">Custom text for your SVG logo. Leave empty to use your name.</p>
                   </div>
                   
                   <div>
@@ -425,10 +425,10 @@ export default function PortfolioBuilder() {
               </section>
 
               <section>
-                <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Profile Picture</h2>
+                <h2 className="text-base sm:text-lg lg:text-xl font-semibold mb-2 sm:mb-3">Profile Picture</h2>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Upload Your Photo</label>
-                  <div className="flex items-center gap-4 flex-wrap">
+                  <label className="block text-xs sm:text-sm font-medium mb-1.5 sm:mb-2">Upload Your Photo</label>
+                  <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
                     <input
                       type="file"
                       accept="image/*"
@@ -460,45 +460,45 @@ export default function PortfolioBuilder() {
                     />
                     <label
                       htmlFor="profile-upload"
-                      className="flex items-center gap-2 px-4 py-2 border rounded-lg cursor-pointer hover:bg-gray-100"
+                      className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 border rounded-lg cursor-pointer hover:bg-gray-100 text-sm"
                     >
-                      <Upload className="w-4 h-4" />
-                      {uploadingProfile ? 'Uploading...' : 'Upload'}
+                      <Upload className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                      <span>{uploadingProfile ? 'Uploading...' : 'Upload'}</span>
                     </label>
                     {watch('profileImageUrl') && (
                       <>
                         <img
                           src={watch('profileImageUrl')}
                           alt="Profile preview"
-                          className="h-12 w-12 object-cover rounded-full"
+                          className="h-10 w-10 sm:h-12 sm:w-12 object-cover rounded-full"
                         />
                         <button
                           type="button"
                           onClick={() => setValue('profileImageUrl', '')}
-                          className="text-red-600 hover:text-red-700 text-sm"
+                          className="text-red-600 hover:text-red-700 text-xs sm:text-sm"
                         >
                           Remove
                         </button>
                       </>
                     )}
                   </div>
-                  <p className="text-sm text-gray-500 mt-2">Square image recommended, max 3MB</p>
+                  <p className="text-[10px] sm:text-xs lg:text-sm text-gray-500 mt-1.5 sm:mt-2">Square image recommended, max 3MB</p>
                 </div>
               </section>
             </div>
 
             {/* Portfolio URL */}
-            <section>
-              <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Portfolio URL</h2>
+            <section className="border-t pt-4 sm:pt-6">
+              <h2 className="text-base sm:text-lg lg:text-xl font-semibold mb-2 sm:mb-3">Portfolio URL</h2>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
                 <input
                   {...register('subdomain', { required: true })}
                   placeholder="your-name"
                   className="w-full sm:flex-1 px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
                 />
-                <span className="text-sm sm:text-base text-gray-600 whitespace-nowrap">.careercraftai.com</span>
+                <span className="text-xs sm:text-sm lg:text-base text-gray-600 whitespace-nowrap">.careercraftai.com</span>
               </div>
-              <p className="text-xs sm:text-sm text-gray-500 mt-2">Choose a unique subdomain for your portfolio</p>
+              <p className="text-[10px] sm:text-xs lg:text-sm text-gray-500 mt-1.5 sm:mt-2">Choose a unique subdomain for your portfolio</p>
             </section>
 
             {/* Color Theme */}
@@ -579,35 +579,44 @@ export default function PortfolioBuilder() {
 
             {/* Hero Section */}
             <section className="border-t pt-4 sm:pt-6">
-              <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Hero Section</h2>
-              <div className="space-y-4">
-                <input
-                  {...register('content.hero.title')}
-                  placeholder="Your Name"
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
-                <input
-                  {...register('content.hero.subtitle')}
-                  placeholder="Your Title (e.g., Full Stack Developer)"
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
-                <textarea
-                  {...register('content.hero.description')}
-                  rows="3"
-                  placeholder="Brief introduction about yourself..."
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
+              <h2 className="text-base sm:text-lg lg:text-xl font-semibold mb-2 sm:mb-3">Hero Section</h2>
+              <div className="space-y-3 sm:space-y-4">
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium mb-1.5 text-gray-700">Your Name</label>
+                  <input
+                    {...register('content.hero.title')}
+                    placeholder="Your Name"
+                    className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium mb-1.5 text-gray-700">Your Title</label>
+                  <input
+                    {...register('content.hero.subtitle')}
+                    placeholder="e.g., Full Stack Developer"
+                    className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium mb-1.5 text-gray-700">Brief Introduction</label>
+                  <textarea
+                    {...register('content.hero.description')}
+                    rows="3"
+                    placeholder="Brief introduction about yourself..."
+                    className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
+                  />
+                </div>
               </div>
             </section>
 
             {/* About */}
             <section className="border-t pt-4 sm:pt-6">
-              <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">About Me</h2>
+              <h2 className="text-base sm:text-lg lg:text-xl font-semibold mb-2 sm:mb-3">About Me</h2>
               <textarea
                 {...register('content.about')}
-                rows="6"
+                rows="5"
                 placeholder="Tell your story, background, and what drives you..."
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
               />
             </section>
 
@@ -621,7 +630,8 @@ export default function PortfolioBuilder() {
                   className="flex items-center justify-center gap-2 text-indigo-600 hover:text-indigo-700 text-sm sm:text-base"
                 >
                   <Plus className="w-4 h-4" />
-                  <span className="whitespace-nowrap">Add Skill Category</span>
+                  <span className="hidden sm:inline whitespace-nowrap">Add Skill Category</span>
+                  <span className="sm:hidden">Add</span>
                 </button>
               </div>
               <div className="space-y-3 sm:space-y-4">
@@ -661,70 +671,83 @@ export default function PortfolioBuilder() {
                   className="flex items-center justify-center gap-2 text-indigo-600 hover:text-indigo-700 text-sm sm:text-base"
                 >
                   <Plus className="w-4 h-4" />
-                  <span className="whitespace-nowrap">Add Project</span>
+                  <span className="hidden sm:inline whitespace-nowrap">Add Project</span>
+                  <span className="sm:hidden">Add</span>
                 </button>
               </div>
-              <div className="space-y-4 sm:space-y-6">
+              <div className="space-y-3 sm:space-y-4 lg:space-y-6">
                 {projectFields.map((field, index) => (
-                  <div key={field.id} className="p-4 sm:p-6 border rounded-lg bg-gray-50">
-                    <div className="flex justify-between items-start mb-3 sm:mb-4">
-                      <h3 className="font-semibold text-base sm:text-lg">Project {index + 1}</h3>
+                  <div key={field.id} className="p-3 sm:p-4 lg:p-6 border rounded-lg bg-gray-50 shadow-sm">
+                    <div className="flex justify-between items-center mb-3 sm:mb-4">
+                      <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-gray-800">Project {index + 1}</h3>
                       <button
                         type="button"
                         onClick={() => removeProject(index)}
-                        className="text-red-600 hover:text-red-700 flex-shrink-0"
+                        className="text-red-600 hover:text-red-700 flex-shrink-0 p-1"
                       >
                         <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
                       </button>
                     </div>
                     <div className="space-y-3 sm:space-y-4">
-                      <input
-                        {...register(`content.projects.${index}.name`)}
-                        placeholder="Project Name"
-                        className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
-                      />
-                      <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
-                        <div>
-                          <label className="block text-xs sm:text-sm font-medium mb-1 text-gray-700">Category/Tag</label>
-                          <select
-                            {...register(`content.projects.${index}.tag`)}
-                            className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base bg-white"
-                          >
-                            <option value="">Select a tag</option>
-                            <option value="ai">AI</option>
-                            <option value="fullstack">Full Stack</option>
-                            <option value="frontend">Frontend</option>
-                            <option value="web">Web</option>
-                          </select>
-                        </div>
-                        <div className="sm:col-span-1"></div>
-                      </div>
-                      <textarea
-                        {...register(`content.projects.${index}.description`)}
-                        rows="3"
-                        placeholder="Project description and key features..."
-                        className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
-                      />
-                      <input
-                        {...register(`content.projects.${index}.technologies`)}
-                        placeholder="Technologies (comma-separated)"
-                        className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
-                      />
-                      <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
+                      <div>
+                        <label className="block text-xs sm:text-sm font-medium mb-1 text-gray-700">Project Name</label>
                         <input
-                          {...register(`content.projects.${index}.liveLink`)}
-                          placeholder="Live Demo URL"
-                          className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
-                        />
-                        <input
-                          {...register(`content.projects.${index}.githubLink`)}
-                          placeholder="GitHub URL"
+                          {...register(`content.projects.${index}.name`)}
+                          placeholder="Project Name"
                           className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium mb-2">Project Image</label>
-                        <div className="flex items-center gap-4 flex-wrap">
+                        <label className="block text-xs sm:text-sm font-medium mb-1 text-gray-700">Category/Tag</label>
+                        <select
+                          {...register(`content.projects.${index}.tag`)}
+                          className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base bg-white"
+                        >
+                          <option value="">Select a tag</option>
+                          <option value="ai">AI</option>
+                          <option value="fullstack">Full Stack</option>
+                          <option value="frontend">Frontend</option>
+                          <option value="web">Web</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs sm:text-sm font-medium mb-1 text-gray-700">Description</label>
+                        <textarea
+                          {...register(`content.projects.${index}.description`)}
+                          rows="3"
+                          placeholder="Project description and key features..."
+                          className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs sm:text-sm font-medium mb-1 text-gray-700">Technologies</label>
+                        <input
+                          {...register(`content.projects.${index}.technologies`)}
+                          placeholder="React, Node.js, MongoDB"
+                          className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
+                        />
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
+                        <div>
+                          <label className="block text-xs sm:text-sm font-medium mb-1 text-gray-700">Live Demo URL</label>
+                          <input
+                            {...register(`content.projects.${index}.liveLink`)}
+                            placeholder="https://..."
+                            className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs sm:text-sm font-medium mb-1 text-gray-700">GitHub URL</label>
+                          <input
+                            {...register(`content.projects.${index}.githubLink`)}
+                            placeholder="https://github.com/..."
+                            className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-700">Project Image</label>
+                        <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
                           <input
                             type="file"
                             accept="image/*"
@@ -734,17 +757,18 @@ export default function PortfolioBuilder() {
                           />
                           <label
                             htmlFor={`project-image-${index}`}
-                            className="flex items-center gap-2 px-4 py-2 border rounded-lg cursor-pointer hover:bg-gray-100"
+                            className="flex items-center gap-2 px-3 sm:px-4 py-2 border rounded-lg cursor-pointer hover:bg-gray-100 text-sm sm:text-base"
                           >
                             <Upload className="w-4 h-4" />
-                            {uploadingProjectImage[index] ? 'Uploading...' : 'Upload Image'}
+                            <span className="hidden sm:inline">{uploadingProjectImage[index] ? 'Uploading...' : 'Upload Image'}</span>
+                            <span className="sm:hidden">{uploadingProjectImage[index] ? 'Uploading...' : 'Upload'}</span>
                           </label>
                           {watch(`content.projects.${index}.image`) && (
                             <>
                               <img
                                 src={watch(`content.projects.${index}.image`)}
                                 alt="Project preview"
-                                className="h-16 w-16 object-cover rounded"
+                                className="h-12 w-12 sm:h-16 sm:w-16 object-cover rounded"
                               />
                               <button
                                 type="button"
@@ -765,29 +789,41 @@ export default function PortfolioBuilder() {
 
             {/* Contact */}
             <section className="border-t pt-4 sm:pt-6">
-              <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Contact Information</h2>
+              <h2 className="text-base sm:text-lg lg:text-xl font-semibold mb-2 sm:mb-3">Contact Information</h2>
               <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
-                <input
-                  {...register('content.contact.email')}
-                  type="email"
-                  placeholder="Email"
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
-                <input
-                  {...register('content.contact.phone')}
-                  placeholder="Phone"
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
-                <input
-                  {...register('content.contact.linkedin')}
-                  placeholder="LinkedIn URL"
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
-                <input
-                  {...register('content.contact.github')}
-                  placeholder="GitHub URL"
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium mb-1.5 text-gray-700">Email</label>
+                  <input
+                    {...register('content.contact.email')}
+                    type="email"
+                    placeholder="your@email.com"
+                    className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium mb-1.5 text-gray-700">Phone</label>
+                  <input
+                    {...register('content.contact.phone')}
+                    placeholder="+1 234 567 8900"
+                    className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium mb-1.5 text-gray-700">LinkedIn</label>
+                  <input
+                    {...register('content.contact.linkedin')}
+                    placeholder="https://linkedin.com/in/..."
+                    className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium mb-1.5 text-gray-700">GitHub</label>
+                  <input
+                    {...register('content.contact.github')}
+                    placeholder="https://github.com/..."
+                    className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
+                  />
+                </div>
               </div>
             </section>
 
@@ -869,35 +905,44 @@ export default function PortfolioBuilder() {
 
             {/* SEO */}
             <section className="border-t pt-4 sm:pt-6">
-              <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">SEO Settings</h2>
-              <div className="space-y-4">
-                <input
-                  {...register('seo.title')}
-                  placeholder="SEO Title"
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
-                <textarea
-                  {...register('seo.description')}
-                  rows="2"
-                  placeholder="SEO Description"
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
-                <input
-                  {...register('seo.keywords')}
-                  placeholder="Keywords (comma-separated)"
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
+              <h2 className="text-base sm:text-lg lg:text-xl font-semibold mb-2 sm:mb-3">SEO Settings</h2>
+              <div className="space-y-3 sm:space-y-4">
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium mb-1.5 text-gray-700">SEO Title</label>
+                  <input
+                    {...register('seo.title')}
+                    placeholder="Your Name - Full Stack Developer"
+                    className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium mb-1.5 text-gray-700">SEO Description</label>
+                  <textarea
+                    {...register('seo.description')}
+                    rows="2"
+                    placeholder="Brief description for search engines..."
+                    className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium mb-1.5 text-gray-700">Keywords</label>
+                  <input
+                    {...register('seo.keywords')}
+                    placeholder="web developer, react, nodejs"
+                    className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
+                  />
+                </div>
               </div>
             </section>
 
             {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 border-t pt-4 sm:pt-6">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 border-t pt-4 sm:pt-6">
               <button
                 type="submit"
                 disabled={loading}
-                className="flex items-center justify-center gap-2 bg-indigo-600 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg hover:bg-indigo-700 disabled:opacity-50 text-sm sm:text-base w-full sm:w-auto"
+                className="flex items-center justify-center gap-1.5 sm:gap-2 bg-indigo-600 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg hover:bg-indigo-700 disabled:opacity-50 text-sm sm:text-base w-full sm:w-auto font-medium"
               >
-                <Save className="w-4 h-4" />
+                <Save className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 <span className="whitespace-nowrap">{loading ? 'Saving...' : 'Save Portfolio'}</span>
               </button>
               {id && (
@@ -905,9 +950,9 @@ export default function PortfolioBuilder() {
                   <button
                     type="button"
                     onClick={publishPortfolio}
-                    className="flex items-center justify-center gap-2 bg-green-600 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg hover:bg-green-700 text-sm sm:text-base w-full sm:w-auto"
+                    className="flex items-center justify-center gap-1.5 sm:gap-2 bg-green-600 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg hover:bg-green-700 text-sm sm:text-base w-full sm:w-auto font-medium"
                   >
-                    <Globe className="w-4 h-4" />
+                    <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     <span className="whitespace-nowrap">{watch('published') ? 'Update & Publish' : 'Publish'}</span>
                   </button>
                   {watch('published') && watch('subdomain') && (
@@ -915,16 +960,16 @@ export default function PortfolioBuilder() {
                       href={`/portfolio/public/${watch('subdomain')}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 bg-gray-600 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg hover:bg-gray-700 text-sm sm:text-base w-full sm:w-auto"
+                      className="flex items-center justify-center gap-1.5 sm:gap-2 bg-gray-600 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg hover:bg-gray-700 text-sm sm:text-base w-full sm:w-auto font-medium"
                     >
-                      <ExternalLink className="w-4 h-4" />
+                      <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       <span className="whitespace-nowrap">View Live</span>
                     </a>
                   )}
                 </>
               )}
               {!id && (
-                <p className="text-xs sm:text-sm text-gray-500 flex items-center justify-center sm:justify-start">
+                <p className="text-[10px] sm:text-xs lg:text-sm text-gray-500 flex items-center justify-center sm:justify-start px-2">
                   💡 Save your portfolio first, then you can publish it
                 </p>
               )}

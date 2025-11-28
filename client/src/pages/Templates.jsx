@@ -100,35 +100,40 @@ export default function Templates() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 sm:py-16 lg:py-20">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 py-8 sm:py-12 lg:py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-        {/* Header */}
-        <div className="text-center mb-8 sm:mb-10 lg:mb-12">
-          <div className="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
-            <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
-            Professional Templates
+        {/* Header - Enhanced */}
+        <div className="text-center mb-8 sm:mb-10 lg:mb-12 relative">
+          <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-32 h-32 bg-gradient-to-br from-indigo-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
+          
+          <div className="relative">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold mb-3 sm:mb-4 shadow-sm border border-indigo-200">
+              <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 animate-pulse" />
+              <span>8 Professional Templates</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 via-indigo-900 to-purple-900 bg-clip-text text-transparent mb-3 sm:mb-4 px-4">
+              Choose Your Perfect Template
+            </h1>
+            <p className="text-sm sm:text-base lg:text-xl text-gray-600 max-w-2xl mx-auto px-4">
+              Select from our professionally designed, ATS-friendly resume templates
+            </p>
           </div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-2 sm:mb-3 lg:mb-4 px-4">
-            Choose Your Perfect Template
-          </h1>
-          <p className="text-sm sm:text-base lg:text-xl text-gray-600 max-w-2xl mx-auto px-4">
-            Select from our professionally designed resume templates
-          </p>
         </div>
 
-        {/* Templates Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+        {/* Templates Grid - Enhanced */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {resumeTemplates.map((template) => (
             <div
               key={template.id}
-              className={`bg-white rounded-lg sm:rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl ${
-                template.popular ? 'ring-2 ring-indigo-600' : ''
+              className={`group bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-105 border ${
+                template.popular ? 'ring-2 ring-indigo-600 border-indigo-200' : 'border-gray-200'
               } ${!template.available ? 'opacity-75' : ''}`}
             >
               {/* Template Preview */}
-              <div className="relative h-48 sm:h-56 lg:h-64 bg-white overflow-hidden">
+              <div className="relative h-48 sm:h-56 lg:h-64 bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden group-hover:from-indigo-50 group-hover:to-purple-50 transition-colors duration-300">
                 {template.popular && (
-                  <div className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-indigo-600 text-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold z-10">
+                  <div className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold z-10 shadow-lg flex items-center gap-1 animate-pulse">
+                    <Sparkles className="w-3 h-3" />
                     Most Popular
                   </div>
                 )}
@@ -689,67 +694,81 @@ export default function Templates() {
                 )}
               </div>
 
-              {/* Template Info */}
-              <div className="p-4 sm:p-5 lg:p-6">
-                <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-1 sm:mb-2">
-                  {template.name}
-                </h3>
+              {/* Template Info - Enhanced */}
+              <div className="p-4 sm:p-5 lg:p-6 relative">
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">{template.icon}</span>
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
+                      {template.name}
+                    </h3>
+                  </div>
+                </div>
                 <p className="text-xs sm:text-sm lg:text-base text-gray-600 mb-3 sm:mb-4 line-clamp-2">
                   {template.description}
                 </p>
 
-                {/* Features */}
-                <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-4 sm:mb-6">
+                {/* Features - Enhanced */}
+                <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-4 sm:mb-5">
                   {template.features.map((feature, index) => (
                     <span
                       key={index}
-                      className="px-2 sm:px-3 py-0.5 sm:py-1 bg-gray-100 text-gray-700 text-[10px] sm:text-xs rounded-full"
+                      className="px-2 sm:px-3 py-1 bg-gradient-to-r from-gray-100 to-gray-50 text-gray-700 text-[10px] sm:text-xs rounded-full border border-gray-200 font-medium"
                     >
                       {feature}
                     </span>
                   ))}
                 </div>
 
-                {/* Actions */}
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => handleUseTemplate(template.id)}
-                    disabled={!template.available}
-                    className={`w-full py-2 sm:py-2.5 lg:py-3 rounded-lg text-sm sm:text-base font-semibold transition-all duration-300 ${
-                      template.available
-                        ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    }`}
-                  >
-                    {template.available ? (
-                      <>
-                        <Check className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 sm:mr-2" />
-                        Use Template
-                      </>
-                    ) : (
-                      'Coming Soon'
-                    )}
-                  </button>
-                </div>
+                {/* Actions - Enhanced */}
+                <button
+                  onClick={() => handleUseTemplate(template.id)}
+                  disabled={!template.available}
+                  className={`w-full py-2.5 sm:py-3 rounded-xl text-sm sm:text-base font-bold transition-all duration-300 flex items-center justify-center gap-2 ${
+                    template.available
+                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 shadow-md hover:shadow-xl hover:scale-105'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
+                  {template.available ? (
+                    <>
+                      <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <span>Use This Template</span>
+                    </>
+                  ) : (
+                    'Coming Soon'
+                  )}
+                </button>
               </div>
             </div>
           ))}
         </div>
 
-        {/* CTA Section */}
-        <div className="mt-10 sm:mt-12 lg:mt-16 text-center bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl sm:rounded-2xl p-6 sm:p-8 lg:p-12 text-white">
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 lg:mb-4">
-            Can't Find What You're Looking For?
-          </h2>
-          <p className="text-sm sm:text-base lg:text-lg mb-4 sm:mb-5 lg:mb-6 opacity-90">
-            More templates are coming soon! We're constantly adding new designs.
-          </p>
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="bg-white text-indigo-600 px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-semibold hover:bg-gray-100 transition-all duration-300"
-          >
-            Start Building Now
-          </button>
+        {/* CTA Section - Enhanced */}
+        <div className="mt-10 sm:mt-12 lg:mt-16 text-center bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-2xl p-8 sm:p-10 lg:p-14 text-white relative overflow-hidden shadow-2xl">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
+          
+          <div className="relative z-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-yellow-400 text-yellow-900 rounded-full text-xs sm:text-sm font-bold mb-4">
+              <Sparkles className="w-4 h-4" />
+              <span>MORE COMING SOON</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4">
+              Can't Find What You're Looking For?
+            </h2>
+            <p className="text-sm sm:text-base lg:text-lg mb-6 sm:mb-8 text-white/90 max-w-2xl mx-auto">
+              More templates are coming soon! We're constantly adding new designs to help you stand out.
+            </p>
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="inline-flex items-center gap-2 bg-white text-indigo-600 px-6 sm:px-8 lg:px-10 py-3 sm:py-3.5 rounded-xl text-sm sm:text-base lg:text-lg font-bold hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+            >
+              <Check className="w-5 h-5" />
+              Start Building Now
+            </button>
+          </div>
         </div>
       </div>
     </div>

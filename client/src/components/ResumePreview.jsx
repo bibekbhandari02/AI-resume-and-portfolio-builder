@@ -166,30 +166,39 @@ function renderClassicTemplate(resumeData) {
                   ? skillGroup.items.join(', ') 
                   : skillGroup.items;
                 
-                const lines = skillsText?.split('\n').filter(line => line.trim());
+                if (!skillsText || !skillsText.trim()) return null;
                 
-                if (lines && lines.length > 0) {
-                  return lines.map((line, lineIndex) => {
-                    const categoryMatch = line.match(/^([^:]+):\s*(.+)$/);
-                    
-                    if (categoryMatch) {
-                      return (
-                        <div key={`${index}-${lineIndex}`} style={{ fontSize: '11pt', marginBottom: '4px', lineHeight: '1.15' }}>
-                          <span style={{ fontWeight: 'bold', color: '#000000' }}>{categoryMatch[1]}: </span>
-                          <span style={{ color: '#000000' }}>{categoryMatch[2]}</span>
-                        </div>
-                      );
-                    }
-                    
-                    return (
-                      <div key={`${index}-${lineIndex}`} style={{ fontSize: '11pt', color: '#000000', marginBottom: '4px', lineHeight: '1.15' }}>
-                        {line}
-                      </div>
-                    );
-                  });
+                // If category exists, show "Category: skills"
+                if (skillGroup.category && skillGroup.category.trim()) {
+                  return (
+                    <div key={index} style={{ fontSize: '11pt', marginBottom: '4px', lineHeight: '1.15' }}>
+                      <span style={{ fontWeight: 'bold', color: '#000000' }}>{skillGroup.category}: </span>
+                      <span style={{ color: '#000000' }}>{skillsText}</span>
+                    </div>
+                  );
                 }
                 
-                return null;
+                // Otherwise, check if skills text has inline categories (e.g., "Frontend: React, Vue")
+                const lines = skillsText.split('\n').filter(line => line.trim());
+                
+                return lines.map((line, lineIndex) => {
+                  const categoryMatch = line.match(/^([^:]+):\s*(.+)$/);
+                  
+                  if (categoryMatch) {
+                    return (
+                      <div key={`${index}-${lineIndex}`} style={{ fontSize: '11pt', marginBottom: '4px', lineHeight: '1.15' }}>
+                        <span style={{ fontWeight: 'bold', color: '#000000' }}>{categoryMatch[1]}: </span>
+                        <span style={{ color: '#000000' }}>{categoryMatch[2]}</span>
+                      </div>
+                    );
+                  }
+                  
+                  return (
+                    <div key={`${index}-${lineIndex}`} style={{ fontSize: '11pt', color: '#000000', marginBottom: '4px', lineHeight: '1.15' }}>
+                      {line}
+                    </div>
+                  );
+                });
               })}
             </div>
           </div>

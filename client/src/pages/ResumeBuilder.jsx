@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useForm, useFieldArray } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { Sparkles, Download, Save, ArrowLeft, Eye, X, Trash2, Award, History, Plus } from 'lucide-react';
+import { Sparkles, Download, Save, ArrowLeft, Eye, X, Trash2, Award, History, Plus, EyeOff, Maximize2, Minimize2, User, Briefcase, GraduationCap, Code, FileText as FileTextIcon } from 'lucide-react';
 import api, { trackEvent } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
 import { downloadResumePDF } from '../utils/pdfGenerator';
@@ -17,6 +17,8 @@ export default function ResumeBuilder() {
   const [loading, setLoading] = useState(false);
   const [enhancing, setEnhancing] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [livePreview, setLivePreview] = useState(false); // Real-time side-by-side preview
+  const [previewScale, setPreviewScale] = useState(0.6); // Scale for preview
   const [showScore, setShowScore] = useState(false);
   const [showVersions, setShowVersions] = useState(false);
   const [aiSuggestions, setAiSuggestions] = useState(null);
@@ -77,6 +79,20 @@ export default function ResumeBuilder() {
       }
     }
   }, [id, searchParams]);
+
+  // Keyboard shortcut for live preview (Ctrl/Cmd + P)
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'p' && window.innerWidth >= 1024) {
+        e.preventDefault();
+        setLivePreview(prev => !prev);
+        toast.success(livePreview ? 'Live preview hidden' : 'Live preview enabled!');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [livePreview]);
 
   const fetchResume = async () => {
     try {
@@ -422,8 +438,8 @@ export default function ResumeBuilder() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-4 sm:py-8">
-      <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
-        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 lg:p-8">
+      <div className={`container mx-auto px-4 sm:px-6 transition-all duration-300 ${livePreview ? 'max-w-[95vw]' : 'max-w-4xl'}`}>
+        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 lg:p-8 mb-4">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
             <div className="flex items-center gap-3 sm:gap-4">
               <Link to="/dashboard" className="text-gray-600 hover:text-gray-900">
@@ -439,13 +455,35 @@ export default function ResumeBuilder() {
               </div>
             </div>
             <div className="flex flex-wrap gap-2 items-center">
+              {/* Live Preview Toggle - Desktop Only */}
+              <button
+                type="button"
+                onClick={() => {
+                  setLivePreview(!livePreview);
+                  if (!livePreview) {
+                    toast.success('Live preview enabled! See changes in real-time →', { duration: 3000 });
+                  }
+                }}
+                className="hidden lg:flex items-center gap-2 bg-indigo-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm sm:text-base relative group"
+                title="Toggle live preview"
+              >
+                {livePreview ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                <span>{livePreview ? 'Hide Live Preview' : 'Live Preview'}</span>
+                {!livePreview && (
+                  <span className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50">
+                    See changes as you type! (Ctrl+P)
+                  </span>
+                )}
+              </button>
+              
+              {/* Full Preview Modal - All Devices */}
               <button
                 type="button"
                 onClick={() => setShowPreview(true)}
                 className="flex items-center gap-2 bg-gray-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-gray-700 text-sm sm:text-base"
               >
-                <Eye className="w-4 h-4" />
-                <span className="hidden sm:inline">Preview</span>
+                <Maximize2 className="w-4 h-4" />
+                <span className="hidden sm:inline">Full Preview</span>
                 <span className="sm:hidden">View</span>
               </button>
               <button
@@ -642,7 +680,34 @@ export default function ResumeBuilder() {
               </div>
             </div>
           )}
+        </div>
 
+        {/* Live Preview Info Banner */}
+        {livePreview && (
+          <div className="hidden lg:block bg-gradient-to-r from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-lg p-3 mb-4">
+            <div className="flex items-center gap-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center">
+                <Eye className="w-4 h-4 text-white" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-800">
+                  ✨ Live Preview Active - Your changes appear instantly on the right!
+                </p>
+              </div>
+              <button
+                onClick={() => setLivePreview(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Main Content Area - Side by Side Layout */}
+        <div className={`grid gap-4 transition-all duration-300 ${livePreview ? 'lg:grid-cols-2' : 'lg:grid-cols-1'}`}>
+          {/* Form Section */}
+          <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 lg:p-8 overflow-auto">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Resume Type Selector */}
             <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-4">
@@ -689,8 +754,13 @@ export default function ResumeBuilder() {
             </div>
 
             {/* Personal Info */}
-            <section>
-              <h2 className="text-xl font-semibold mb-4">Personal Information</h2>
+            <section className="border-t pt-6">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-2 bg-indigo-100 rounded-lg">
+                  <User className="w-5 h-5 text-indigo-600" />
+                </div>
+                <h2 className="text-xl font-semibold text-gray-900">Personal Information</h2>
+              </div>
               <div className="grid md:grid-cols-2 gap-4">
                 <input
                   {...register('personalInfo.fullName')}
@@ -745,28 +815,39 @@ export default function ResumeBuilder() {
             </section>
 
             {/* Summary */}
-            <section>
-              <h2 className="text-xl font-semibold mb-4">Professional Summary</h2>
+            <section className="border-t pt-6">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <FileTextIcon className="w-5 h-5 text-purple-600" />
+                </div>
+                <h2 className="text-xl font-semibold text-gray-900">Professional Summary</h2>
+              </div>
               <textarea
                 {...register('summary')}
                 rows="4"
-                placeholder="Brief professional summary..."
-                className="w-full px-4 py-2 border rounded-lg"
+                placeholder="Brief professional summary highlighting your key strengths and career goals..."
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
               />
             </section>
 
             {/* Experience */}
             {resumeType === 'experienced' && (
-              <section>
+              <section className="border-t pt-6">
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-xl font-semibold">Work Experience</h2>
+                  <div className="flex items-center gap-2">
+                    <div className="p-2 bg-blue-100 rounded-lg">
+                      <Briefcase className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <h2 className="text-xl font-semibold text-gray-900">Work Experience</h2>
+                  </div>
                   <button
                     type="button"
                     onClick={() => appendExperience({ company: '', position: '', startDate: '', endDate: '', description: [''] })}
-                    className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm"
+                    className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-xs sm:text-sm font-medium shadow-sm hover:shadow-md transition-all hover:scale-105"
                   >
                     <Plus className="w-4 h-4" />
-                    Add Experience
+                    <span className="hidden sm:inline">Add Experience</span>
+                    <span className="sm:hidden">Add</span>
                   </button>
                 </div>
                 
@@ -823,7 +904,7 @@ export default function ResumeBuilder() {
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">Projects</h2>
                 {resumeType === 'fresher' ? (
-                  <span className="text-sm text-purple-600 font-semibold">⭐ MOST IMPORTANT for freshers!</span>
+                  <span className="hidden sm:inline text-sm text-purple-600 font-semibold">⭐ MOST IMPORTANT for freshers!</span>
                 ) : (
                   <span className="text-sm text-gray-500">(Optional)</span>
                 )}
@@ -840,7 +921,8 @@ export default function ResumeBuilder() {
                   className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm"
                 >
                   <Plus className="w-4 h-4" />
-                  Add Project
+                  <span className="hidden sm:inline">Add Project</span>
+                  <span className="sm:hidden">Add</span>
                 </button>
               </div>
               
@@ -851,44 +933,47 @@ export default function ResumeBuilder() {
               )}
               
               {projectFields.map((field, index) => (
-                <div key={field.id} className="space-y-4 p-4 border rounded-lg mb-4 relative">
-                  {projectFields.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeProject(index)}
-                      className="absolute top-2 right-2 text-red-500 hover:text-red-700"
-                      title="Remove this project"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                  )}
+                <div key={field.id} className="space-y-3 sm:space-y-4 p-3 sm:p-4 border rounded-lg mb-3 sm:mb-4 relative bg-gray-50">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-sm sm:text-base font-semibold text-gray-700">Project {index + 1}</h4>
+                    {projectFields.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeProject(index)}
+                        className="text-red-500 hover:text-red-700 p-1"
+                        title="Remove this project"
+                      >
+                        <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                      </button>
+                    )}
+                  </div>
                   
                   <input
                     {...register(`projects.${index}.name`)}
                     placeholder="Project Name (e.g., E-commerce Website)"
-                    className="w-full px-4 py-2 border rounded-lg"
+                    className="w-full px-3 sm:px-4 py-2 border rounded-lg text-sm sm:text-base focus:ring-2 focus:ring-indigo-500"
                   />
                   <textarea
                     {...register(`projects.${index}.description`)}
                     rows="3"
                     placeholder="Brief description of the project and your role..."
-                    className="w-full px-4 py-2 border rounded-lg"
+                    className="w-full px-3 sm:px-4 py-2 border rounded-lg text-sm sm:text-base focus:ring-2 focus:ring-indigo-500"
                   />
                   <input
                     {...register(`projects.${index}.technologies`)}
                     placeholder="Technologies used (comma separated: React, Node.js, MongoDB)"
-                    className="w-full px-4 py-2 border rounded-lg"
+                    className="w-full px-3 sm:px-4 py-2 border rounded-lg text-sm sm:text-base focus:ring-2 focus:ring-indigo-500"
                   />
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
                     <input
                       {...register(`projects.${index}.link`)}
                       placeholder="Live Demo URL (optional)"
-                      className="px-4 py-2 border rounded-lg"
+                      className="w-full px-3 sm:px-4 py-2 border rounded-lg text-sm sm:text-base focus:ring-2 focus:ring-indigo-500"
                     />
                     <input
                       {...register(`projects.${index}.github`)}
                       placeholder="GitHub URL (optional)"
-                      className="px-4 py-2 border rounded-lg"
+                      className="w-full px-3 sm:px-4 py-2 border rounded-lg text-sm sm:text-base focus:ring-2 focus:ring-indigo-500"
                     />
                   </div>
                 </div>
@@ -905,7 +990,8 @@ export default function ResumeBuilder() {
                   className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm"
                 >
                   <Plus className="w-4 h-4" />
-                  Add Certification
+                  <span className="hidden sm:inline">Add Certification</span>
+                  <span className="sm:hidden">Add</span>
                 </button>
               </div>
               
@@ -995,18 +1081,72 @@ export default function ResumeBuilder() {
 
             {/* Skills */}
             <section>
-              <h2 className="text-xl font-semibold mb-4">Skills</h2>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-3 text-sm text-blue-800">
-                💡 Tip: Format skills with categories for better organization:<br/>
-                <code className="bg-white px-2 py-1 rounded">Frontend: HTML, CSS, JavaScript</code><br/>
-                <code className="bg-white px-2 py-1 rounded">Backend: Node.js, Express, MongoDB</code>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold">Skills</h2>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const currentSkills = watch('skills') || [];
+                    if (currentSkills.length === 0 || !Array.isArray(currentSkills)) {
+                      setValue('skills', [
+                        { category: 'Technical Skills', items: watch('skills.0.items') || '' },
+                        { category: 'Tools & Technologies', items: '' }
+                      ]);
+                    } else {
+                      setValue('skills', [...currentSkills, { category: '', items: '' }]);
+                    }
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span className="hidden sm:inline">Add Skill Category</span>
+                  <span className="sm:hidden">Add</span>
+                </button>
               </div>
-              <textarea
-                {...register('skills.0.items')}
-                rows="6"
-                placeholder=""
-                className="w-full px-4 py-2 border rounded-lg font-mono text-sm"
-              />
+              
+              {/* Display all skill categories */}
+              {watch('skills') && Array.isArray(watch('skills')) && watch('skills').length > 0 ? (
+                <div className="space-y-4">
+                  {watch('skills').map((skill, index) => (
+                    <div key={index} className="border rounded-lg p-4 bg-gray-50">
+                      <div className="flex items-center justify-between mb-2">
+                        <input
+                          {...register(`skills.${index}.category`)}
+                          placeholder="Category (e.g., Technical Skills)"
+                          className="flex-1 px-3 py-2 border rounded-lg font-semibold"
+                        />
+                        {watch('skills').length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const currentSkills = watch('skills');
+                              setValue('skills', currentSkills.filter((_, i) => i !== index));
+                            }}
+                            className="ml-2 p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                      <textarea
+                        {...register(`skills.${index}.items`)}
+                        rows="3"
+                        placeholder="Comma-separated skills (e.g., HTML, CSS, JavaScript)"
+                        className="w-full px-3 py-2 border rounded-lg text-sm"
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div>
+                  <textarea
+                    {...register('skills.0.items')}
+                    rows="6"
+                    placeholder="Enter your skills (comma-separated)"
+                    className="w-full px-4 py-2 border rounded-lg font-mono text-sm"
+                  />
+                </div>
+              )}
             </section>
 
             {/* Chronological Template Specific Sections */}
@@ -1104,6 +1244,71 @@ export default function ResumeBuilder() {
               </button>
             </div>
           </form>
+          </div>
+
+          {/* Live Preview Panel - Desktop Only */}
+          {livePreview && (
+            <div className="hidden lg:block bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg shadow-lg p-4 overflow-hidden sticky top-4 h-[calc(100vh-8rem)]">
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-300">
+                <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                  <Eye className="w-5 h-5 text-indigo-600" />
+                  <span>Live Preview</span>
+                  <span className="text-xs text-gray-500 font-normal">(Updates as you type)</span>
+                </h3>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewScale(Math.max(0.4, previewScale - 0.1))}
+                    className="p-1.5 hover:bg-white rounded transition-colors"
+                    title="Zoom out"
+                  >
+                    <Minimize2 className="w-4 h-4 text-gray-600" />
+                  </button>
+                  <span className="text-xs text-gray-600 font-medium min-w-[3rem] text-center">
+                    {Math.round(previewScale * 100)}%
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewScale(Math.min(1, previewScale + 0.1))}
+                    className="p-1.5 hover:bg-white rounded transition-colors"
+                    title="Zoom in"
+                  >
+                    <Maximize2 className="w-4 h-4 text-gray-600" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewScale(0.6)}
+                    className="ml-2 px-2 py-1 text-xs bg-white hover:bg-gray-50 rounded transition-colors text-gray-700"
+                    title="Reset zoom"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
+              
+              <div className="overflow-auto bg-white rounded shadow-inner p-4" style={{ maxHeight: 'calc(100vh - 13rem)' }}>
+                <div 
+                  className="transition-transform duration-200"
+                  style={{ 
+                    transform: `scale(${previewScale})`,
+                    transformOrigin: 'top left',
+                    width: `${100 / previewScale}%`
+                  }}
+                >
+                  <ResumePreview 
+                    resumeData={watch()} 
+                    template={selectedTemplate}
+                  />
+                </div>
+              </div>
+              
+              <div className="mt-3 text-center">
+                <p className="text-xs text-gray-500">
+                  💡 Tip: Use Full Preview for print-ready view
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

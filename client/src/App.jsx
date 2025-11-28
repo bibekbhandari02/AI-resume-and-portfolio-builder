@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { Toaster } from 'react-hot-toast';
 import { useAuthStore } from './store/authStore';
 import Navbar from './components/Navbar';
+import ScrollToTop from './components/ScrollToTop';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -15,6 +16,7 @@ import Templates from './pages/Templates';
 import Analytics from './pages/Analytics';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentFailure from './pages/PaymentFailure';
+import JobAnalyzer from './pages/JobAnalyzer';
 
 const PrivateRoute = ({ children }) => {
   const { token } = useAuthStore();
@@ -37,6 +39,7 @@ const Layout = ({ children }) => {
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Toaster position="top-right" />
       <Layout>
         <Routes>
@@ -70,6 +73,9 @@ function App() {
         } />
         <Route path="/cover-letter/:id" element={
           <PrivateRoute><CoverLetterBuilder /></PrivateRoute>
+        } />
+        <Route path="/job-analyzer" element={
+          <PrivateRoute><JobAnalyzer /></PrivateRoute>
         } />
         <Route path="/payment/success" element={
           <PrivateRoute><PaymentSuccess /></PrivateRoute>

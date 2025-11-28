@@ -214,7 +214,7 @@ ${!hasExperience ? `**ATS Optimization Tips Applied**
   }
 };
 
-export const generateCoverLetter = async (jobTitle, resumeData, companyName = '', hiringManager = '', customPrompt = '') => {
+export const generateCoverLetter = async (jobTitle, resumeData, companyName = '', hiringManager = '', customPrompt = '', jobDescription = '', tone = 'professional') => {
   const companyText = companyName ? ` at ${companyName}` : '';
   
   // Get current date
@@ -232,6 +232,32 @@ export const generateCoverLetter = async (jobTitle, resumeData, companyName = ''
   const location = personalInfo.location || personalInfo.address || personalInfo.city || '[Location]';
   const linkedin = personalInfo.linkedin || personalInfo.linkedinUrl || '';
   const github = personalInfo.github || personalInfo.githubUrl || '';
+  
+  // Parse job description if provided
+  let jobRequirements = null;
+  if (jobDescription && jobDescription.trim().length > 50) {
+    try {
+      // Extract key requirements from job description
+      const jdAnalysisPrompt = `Analyze this job description and extract key information in JSON format:
+
+JOB DESCRIPTION:
+${jobDescription}
+
+Return ONLY valid JSON (no markdown):
+{
+  "keyResponsibilities": ["resp1", "resp2", "resp3"],
+  "requiredSkills": ["skill1", "skill2", "skill3"],
+  "companyValues": ["value1", "value2"],
+  "keywords": ["keyword1", "keyword2", "keyword3"]
+}`;
+      
+      const jdAnalysis = await callGeminiAPI(jdAnalysisPrompt, { timeout: 15000 });
+      const cleaned = jdAnalysis.trim().replace(/```json\n?/g, '').replace(/```\n?/g, '');
+      jobRequirements = JSON.parse(cleaned);
+    } catch (error) {
+      console.log('Job description analysis failed, continuing without it');
+    }
+  }
   
   // Analyze custom prompt for specific instructions
   const promptLower = customPrompt?.toLowerCase() || '';
@@ -271,8 +297,18 @@ export const generateCoverLetter = async (jobTitle, resumeData, companyName = ''
   // Analyze prompt for specific requirements
   let paragraphCount = 3;
   let wordLimit = null;
-  let tone = 'professional and enthusiastic';
+  let toneDescription = 'professional and enthusiastic';
   let focusAreas = [];
+  
+  // Map tone selection to description
+  const toneMap = {
+    'professional': 'professional, confident, and results-oriented',
+    'enthusiastic': 'enthusiastic, passionate, and energetic',
+    'creative': 'creative, unique, and memorable',
+    'formal': 'formal, traditional, and respectful',
+    'conversational': 'conversational, friendly, yet professional'
+  };
+  toneDescription = toneMap[tone] || toneDescription;
   
   if (customPrompt) {
     // Paragraph count
@@ -297,11 +333,11 @@ export const generateCoverLetter = async (jobTitle, resumeData, companyName = ''
       paragraphCount = 1;
     }
     
-    // Tone
-    if (promptLower.includes('formal')) tone = 'formal and professional';
-    else if (promptLower.includes('casual') || promptLower.includes('friendly')) tone = 'friendly yet professional';
-    else if (promptLower.includes('enthusiastic') || promptLower.includes('passionate')) tone = 'enthusiastic and passionate';
-    else if (promptLower.includes('concise') || promptLower.includes('brief')) tone = 'concise and direct';
+    // Override tone if specified in custom prompt
+    if (promptLower.includes('formal')) toneDescription = 'formal and professional';
+    else if (promptLower.includes('casual') || promptLower.includes('friendly')) toneDescription = 'friendly yet professional';
+    else if (promptLower.includes('enthusiastic') || promptLower.includes('passionate')) toneDescription = 'enthusiastic and passionate';
+    else if (promptLower.includes('concise') || promptLower.includes('brief')) toneDescription = 'concise and direct';
     
     // Focus areas
     if (promptLower.includes('leadership')) focusAreas.push('leadership experience and team management');
@@ -345,6 +381,15 @@ JOB APPLICATION:
 Position: ${jobTitle}${companyText}
 ${hiringManager ? `Hiring Manager: ${hiringManager}` : ''}
 
+${jobRequirements ? `JOB REQUIREMENTS (from job description):
+Key Responsibilities: ${jobRequirements.keyResponsibilities?.join(', ')}
+Required Skills: ${jobRequirements.requiredSkills?.join(', ')}
+Company Values: ${jobRequirements.companyValues?.join(', ')}
+Important Keywords: ${jobRequirements.keywords?.join(', ')}
+
+⚠️ CRITICAL: Address these specific requirements in the cover letter!
+` : ''}
+
 CANDIDATE PROFILE:
 Name: ${resumeAnalysis.name}
 Current Role: ${resumeAnalysis.currentRole}
@@ -371,14 +416,19 @@ WRITING REQUIREMENTS:
 1. STRUCTURE:
    - Write EXACTLY ${paragraphCount} paragraph${paragraphCount > 1 ? 's' : ''} (body only, excluding greeting and closing)
    ${wordLimit ? `- Keep total length around ${wordLimit} words` : '- Keep it concise and impactful (250-350 words ideal)'}
-   - Use ${tone} tone throughout
+   - Use ${toneDescription} tone throughout
 
 2. CONTENT FOCUS:
+   ${jobRequirements ? `- MUST address the job requirements listed above
+   - Match candidate's experience to specific responsibilities
+   - Highlight skills that align with required skills
+   - Use keywords from the job description naturally` : ''}
    ${focusAreas.length > 0 ? `- Emphasize: ${focusAreas.join(', ')}` : '- Highlight relevant experience, skills, and enthusiasm for the role'}
-   - Include specific examples and achievements from their background
+   - Include specific examples and achievements from their background (use STAR method when possible)
    - Show genuine interest in the company and position
    - Demonstrate value they'll bring to the role
    - Use quantifiable results when possible (percentages, numbers, impact)
+   - Tell a compelling story, not just list qualifications
 
 3. PARAGRAPH STRUCTURE (for ${paragraphCount} paragraphs):
    ${paragraphCount === 1 ? `- Single powerful paragraph covering: interest in role, key qualifications, and enthusiasm` : ''}
@@ -402,13 +452,16 @@ WRITING REQUIREMENTS:
    - Use actual line breaks, NOT literal "\\n" text
 
 5. QUALITY STANDARDS:
-   - ATS-friendly language with relevant keywords
+   - ATS-friendly language with relevant keywords ${jobRequirements ? '(especially from job description)' : ''}
    - Professional yet personable tone
-   - No clichés or generic statements
+   - No clichés or generic statements ("I am writing to apply", "I am a hard worker", etc.)
    - Specific to this candidate and role
-   - Compelling and memorable
-   - Action-oriented language
+   - Compelling and memorable opening hook
+   - Action-oriented language with strong verbs
    - Shows research/knowledge about the role
+   - Use storytelling and specific examples
+   - Demonstrate cultural fit and enthusiasm
+   - End with a confident call to action
 
 EXAMPLE FORMAT:
 ${greeting}
