@@ -251,61 +251,71 @@ export default function CoverLetterBuilder() {
         <div className="mb-4 sm:mb-6 lg:mb-8">
           <button
             onClick={() => navigate('/dashboard')}
-            className="flex items-center gap-1.5 sm:gap-2 text-gray-600 hover:text-gray-900 mb-3 sm:mb-4 text-xs sm:text-sm lg:text-base p-1"
+            className="flex items-center gap-1.5 sm:gap-2 text-gray-600 hover:text-gray-900 mb-3 sm:mb-4 text-sm sm:text-base p-1"
           >
             <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             <span>Back to Dashboard</span>
           </button>
           <div className="flex flex-col gap-3 sm:gap-4">
-            <div>
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Cover Letter Builder</h1>
-              <p className="text-xs sm:text-sm lg:text-base text-gray-600 mt-1">Create a personalized cover letter with AI</p>
+            {/* Title and Buttons Row - Desktop */}
+            <div className="hidden sm:flex items-center justify-between gap-4">
+              <div>
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Cover Letter Builder</h1>
+                <p className="text-sm sm:text-base lg:text-lg text-gray-600 mt-1">Create a personalized cover letter with AI</p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2 flex-shrink-0">
+                <button
+                  onClick={handleCopy}
+                  disabled={!formData.content}
+                  className="flex items-center gap-1.5 px-4 py-1.5 sm:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                  title="Copy to clipboard"
+                >
+                  <Copy className="w-4 h-4" />
+                  <span>Copy</span>
+                </button>
+                <button
+                  onClick={handleDownload}
+                  disabled={!formData.content}
+                  className="flex items-center gap-1.5 px-4 py-1.5 sm:py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Download</span>
+                </button>
+                <button
+                  onClick={handleSave}
+                  disabled={saving || !formData.content}
+                  className="flex items-center gap-1.5 px-4 py-1.5 sm:py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{saving ? 'Saving...' : 'Save'}</span>
+                </button>
+              </div>
             </div>
-            <div className="hidden sm:flex flex-wrap items-center gap-2">
-              <button
-                onClick={handleCopy}
-                disabled={!formData.content}
-                className="flex items-center gap-1.5 px-4 py-1.5 sm:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-                title="Copy to clipboard"
-              >
-                <Copy className="w-4 h-4" />
-                <span>Copy</span>
-              </button>
-              <button
-                onClick={handleDownload}
-                disabled={!formData.content}
-                className="flex items-center gap-1.5 px-4 py-1.5 sm:py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-              >
-                <Download className="w-4 h-4" />
-                <span>Download</span>
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={saving || !formData.content}
-                className="flex items-center gap-1.5 px-4 py-1.5 sm:py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-              >
-                <Save className="w-4 h-4" />
-                <span>{saving ? 'Saving...' : 'Save'}</span>
-              </button>
-            </div>
-            {/* Mobile action buttons - Download and Save only */}
-            <div className="flex sm:hidden flex-wrap items-center gap-2">
-              <button
-                onClick={handleDownload}
-                disabled={!formData.content}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-xs font-medium"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>PDF</span>
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={saving || !formData.content}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-xs font-medium"
-              >
-                <Save className="w-3.5 h-3.5" />
-                <span>{saving ? 'Saving...' : 'Save'}</span>
-              </button>
+            
+            {/* Mobile Layout - Title and Buttons Separate */}
+            <div className="sm:hidden">
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">Cover Letter Builder</h1>
+                <p className="text-sm text-gray-600 mt-1">Create a personalized cover letter with AI</p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2 mt-3">
+                <button
+                  onClick={handleDownload}
+                  disabled={!formData.content}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>PDF</span>
+                </button>
+                <button
+                  onClick={handleSave}
+                  disabled={saving || !formData.content}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{saving ? 'Saving...' : 'Save'}</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -317,7 +327,7 @@ export default function CoverLetterBuilder() {
             
             <div className="space-y-3 sm:space-y-4">
               <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1.5 sm:mb-2">
                   Job Title <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -330,7 +340,7 @@ export default function CoverLetterBuilder() {
               </div>
 
               <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1.5 sm:mb-2">
                   Company Name
                 </label>
                 <input
@@ -343,7 +353,7 @@ export default function CoverLetterBuilder() {
               </div>
 
               <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1.5 sm:mb-2">
                   Hiring Manager Name
                 </label>
                 <input
@@ -356,7 +366,7 @@ export default function CoverLetterBuilder() {
               </div>
 
               <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1.5 sm:mb-2">
                   Select Resume <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -383,7 +393,7 @@ export default function CoverLetterBuilder() {
               </div>
 
               <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1.5 sm:mb-2">
                   Job Description (Optional but Recommended)
                 </label>
                 <textarea
@@ -391,13 +401,13 @@ export default function CoverLetterBuilder() {
                   onChange={(e) => setFormData({ ...formData, jobDescription: e.target.value })}
                   placeholder="Paste the job description here for a highly tailored cover letter..."
                   rows="4"
-                  className="w-full px-3 sm:px-4 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+                  className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
                 />
-                <p className="text-[10px] sm:text-xs text-gray-500 mt-1">💡 Adding the job description creates a much more targeted cover letter</p>
+                <p className="text-xs sm:text-sm text-gray-500 mt-1">💡 Adding the job description creates a much more targeted cover letter</p>
               </div>
 
               <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1.5 sm:mb-2">
                   Tone
                 </label>
                 <select
@@ -414,7 +424,7 @@ export default function CoverLetterBuilder() {
               </div>
 
               <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1.5 sm:mb-2">
                   Custom Instructions (Optional)
                 </label>
                 <textarea
@@ -422,11 +432,11 @@ export default function CoverLetterBuilder() {
                   onChange={(e) => setFormData({ ...formData, customPrompt: e.target.value })}
                   placeholder="e.g., Emphasize my leadership skills, keep it under 300 words, use 2 paragraphs, focus on technical achievements..."
                   rows="3"
-                  className="w-full px-3 sm:px-4 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+                  className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
                 />
                 <div className="mt-2 space-y-1 bg-blue-50 border border-blue-200 rounded-lg p-2 sm:p-3">
-                  <p className="text-xs sm:text-sm font-semibold text-blue-900">💡 What you can customize:</p>
-                  <div className="text-[10px] sm:text-xs text-blue-800 space-y-0.5">
+                  <p className="text-sm sm:text-base font-semibold text-blue-900">💡 What you can customize:</p>
+                  <div className="text-xs sm:text-sm text-blue-800 space-y-0.5">
                     <p>• <strong>Length:</strong> "Make it smaller/shorter" or "Keep it under 250 words"</p>
                     <p>• <strong>Focus:</strong> "Emphasize leadership skills" or "Highlight technical expertise"</p>
                     <p>• <strong>Tone:</strong> "Make it formal" or "Use enthusiastic tone"</p>
@@ -464,7 +474,7 @@ export default function CoverLetterBuilder() {
           </div>
 
           {/* Preview/Editor */}
-          <div className="bg-white rounded-lg shadow-lg p-3 sm:p-4 lg:p-6">
+          <div className="bg-white rounded-lg shadow-lg p-3 sm:p-4 lg:p-6 lg:h-full flex flex-col">
             <div className="flex items-center justify-between mb-3 sm:mb-4 lg:mb-6">
               <h2 className="text-base sm:text-lg lg:text-xl font-semibold">Cover Letter</h2>
               <div className="flex items-center gap-2">
@@ -472,7 +482,7 @@ export default function CoverLetterBuilder() {
                 <button
                   onClick={handleCopy}
                   disabled={!formData.content}
-                  className="sm:hidden flex items-center gap-1.5 px-2.5 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-xs font-medium shadow-sm"
+                  className="sm:hidden flex items-center gap-1.5 px-2.5 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium shadow-sm"
                   title="Copy to clipboard"
                 >
                   <Copy className="w-3.5 h-3.5" />
@@ -482,12 +492,12 @@ export default function CoverLetterBuilder() {
               </div>
             </div>
 
-            <div className="relative">
+            <div className="relative flex-1">
               <textarea
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                 placeholder="Your AI-generated cover letter will appear here. You can edit it after generation."
-                className="w-full h-[350px] sm:h-[450px] lg:h-[500px] px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none text-xs sm:text-sm leading-relaxed"
+                className="w-full h-[550px] sm:h-[500px] lg:h-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none text-sm sm:text-base leading-relaxed"
                 style={{ whiteSpace: 'pre-wrap', fontFamily: 'system-ui, -apple-system, sans-serif' }}
               />
               {!formData.content && (

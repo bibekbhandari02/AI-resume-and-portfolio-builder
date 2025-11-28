@@ -17,7 +17,7 @@ export default function Dashboard() {
   const [showAllPortfolios, setShowAllPortfolios] = useState(false);
   const [showAllCoverLetters, setShowAllCoverLetters] = useState(false);
   
-  const INITIAL_DISPLAY_COUNT = 6;
+  const INITIAL_DISPLAY_COUNT = 4;
 
   useEffect(() => {
     fetchData();
@@ -123,7 +123,7 @@ export default function Dashboard() {
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 sm:mb-3">
             Welcome back, {user?.name}! 👋
           </h1>
-          <p className="text-gray-600 text-sm sm:text-base lg:text-lg">Create professional resumes, portfolios, and cover letters with AI</p>
+          <p className="text-gray-600 text-base sm:text-lg lg:text-xl">Create professional resumes, portfolios, and cover letters with AI</p>
         </div>
 
         {/* Stats - Enhanced with animations and better design */}
@@ -133,16 +133,16 @@ export default function Dashboard() {
             <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-500"></div>
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-1 sm:mb-2">
-                <h3 className="text-white/90 text-xs sm:text-sm font-medium">Subscription</h3>
+                <h3 className="text-white/90 text-sm sm:text-base font-medium">Subscription</h3>
                 <div className="p-1.5 sm:p-2 bg-white/20 rounded-lg backdrop-blur-sm">
-                  <CreditCard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <CreditCard className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
               </div>
               <p className="text-xl sm:text-2xl lg:text-3xl font-bold capitalize mb-1">{user?.subscription}</p>
               {user?.subscription === 'free' && (
-                <Link to="/pricing" className="text-xs sm:text-sm text-white/90 hover:text-white mt-1 sm:mt-2 inline-flex items-center gap-1 group/link">
+                <Link to="/pricing" className="text-sm sm:text-base text-white/90 hover:text-white mt-1 sm:mt-2 inline-flex items-center gap-1 group/link">
                   <span>Upgrade</span>
-                  <TrendingUp className="w-3 h-3 group-hover/link:translate-x-1 transition-transform" />
+                  <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/link:translate-x-1 transition-transform" />
                 </Link>
               )}
             </div>
@@ -151,9 +151,9 @@ export default function Dashboard() {
           {/* Resume Credits */}
           <div className="bg-white p-4 sm:p-5 lg:p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 hover:scale-105 border border-gray-100 group">
             <div className="flex items-center justify-between mb-1 sm:mb-2">
-              <h3 className="text-gray-600 text-xs sm:text-sm font-medium">Resume Credits</h3>
+              <h3 className="text-gray-600 text-sm sm:text-base font-medium">Resume Credits</h3>
               <div className="p-1.5 sm:p-2 bg-indigo-50 rounded-lg group-hover:bg-indigo-100 transition-colors">
-                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600" />
+                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />
               </div>
             </div>
             <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{user?.credits?.resumeGenerations || 0}</p>
@@ -161,7 +161,7 @@ export default function Dashboard() {
               {user?.subscription === 'pro' ? (
                 <div className="flex items-center gap-1.5 text-indigo-600">
                   <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-                  <span className="text-xs font-bold">Unlimited</span>
+                  <span className="text-xs sm:text-sm font-bold">Unlimited</span>
                 </div>
               ) : (
                 <>
@@ -173,7 +173,7 @@ export default function Dashboard() {
                       }}
                     ></div>
                   </div>
-                  <span className="text-[10px] text-gray-500 font-medium whitespace-nowrap">
+                  <span className="text-xs sm:text-sm text-gray-500 font-medium whitespace-nowrap">
                     / {user?.subscription === 'starter' ? '20' : '5'}
                   </span>
                 </>
@@ -184,19 +184,19 @@ export default function Dashboard() {
           {/* Portfolio Credits */}
           <div className="bg-white p-4 sm:p-5 lg:p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 hover:scale-105 border border-gray-100 group">
             <div className="flex items-center justify-between mb-1 sm:mb-2">
-              <h3 className="text-gray-600 text-xs sm:text-sm font-medium">Portfolio Credits</h3>
-              <div className="flex flex-col items-end gap-1">
-                <div className="p-1.5 sm:p-2 bg-purple-50 rounded-lg group-hover:bg-purple-100 transition-colors">
-                  <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600" />
-                </div>
-                {(user?.subscription === 'starter' || user?.subscription === 'pro') && (
-                  <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-[10px] font-bold rounded-full">
-                    {user?.subscription === 'pro' ? 'PRO' : 'STARTER+'}
-                  </span>
-                )}
+              <h3 className="text-gray-600 text-sm sm:text-base font-medium">Portfolio Credits</h3>
+              <div className="p-1.5 sm:p-2 bg-purple-50 rounded-lg group-hover:bg-purple-100 transition-colors">
+                <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
               </div>
             </div>
-            <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{user?.credits?.portfolios || 0}</p>
+            <div className="flex items-center justify-between mb-1">
+              <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{user?.credits?.portfolios || 0}</p>
+              {(user?.subscription === 'starter' || user?.subscription === 'pro') && (
+                <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-bold rounded-full">
+                  {user?.subscription === 'pro' ? 'PRO' : 'STARTER+'}
+                </span>
+              )}
+            </div>
             <div className="mt-2 flex items-center gap-2">
               <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
                 <div 
@@ -206,7 +206,7 @@ export default function Dashboard() {
                   }}
                 ></div>
               </div>
-              <span className="text-[10px] text-gray-500 font-medium whitespace-nowrap">
+              <span className="text-xs sm:text-sm text-gray-500 font-medium whitespace-nowrap">
                 / {user?.subscription === 'pro' ? '10' : user?.subscription === 'starter' ? '3' : '1'}
               </span>
             </div>
@@ -216,28 +216,28 @@ export default function Dashboard() {
           {user?.subscription === 'pro' ? (
             <div className="bg-white p-4 sm:p-5 lg:p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 hover:scale-105 border border-gray-100 group">
               <div className="flex items-center justify-between mb-1 sm:mb-2">
-                <h3 className="text-gray-600 text-xs sm:text-sm font-medium">Cover Letters</h3>
+                <h3 className="text-gray-600 text-sm sm:text-base font-medium">Cover Letters</h3>
                 <div className="p-1.5 sm:p-2 bg-green-50 rounded-lg group-hover:bg-green-100 transition-colors">
-                  <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-600" />
+                  <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
                 </div>
               </div>
               <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{user?.credits?.coverLetters || 0}</p>
               <div className="mt-2 flex items-center gap-2">
                 <div className="flex items-center gap-1.5 text-green-600">
                   <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-                  <span className="text-xs font-bold">Unlimited</span>
+                  <span className="text-xs sm:text-sm font-bold">Unlimited</span>
                 </div>
               </div>
             </div>
           ) : (
             <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 sm:p-5 lg:p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 hover:scale-105 border-2 border-green-200 border-dashed group relative overflow-hidden">
               <div className="flex items-center justify-between mb-1 sm:mb-2">
-                <h3 className="text-gray-700 text-xs sm:text-sm font-medium">Cover Letters</h3>
+                <h3 className="text-gray-700 text-sm sm:text-base font-medium">Cover Letters</h3>
                 <div className="flex flex-col items-end gap-1">
                   <div className="p-1.5 sm:p-2 bg-green-100 rounded-lg">
-                    <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-600 opacity-50" />
+                    <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 opacity-50" />
                   </div>
-                  <span className="px-2 py-0.5 bg-yellow-400 text-yellow-900 text-[10px] font-bold rounded-full">
+                  <span className="px-2 py-0.5 bg-yellow-400 text-yellow-900 text-xs font-bold rounded-full">
                     PRO
                   </span>
                 </div>
@@ -246,10 +246,10 @@ export default function Dashboard() {
               <div className="mt-2">
                 <Link 
                   to="/pricing"
-                  className="text-xs font-semibold text-green-700 hover:text-green-800 flex items-center gap-1 group-hover:gap-2 transition-all"
+                  className="text-xs sm:text-sm font-semibold text-green-700 hover:text-green-800 flex items-center gap-1 group-hover:gap-2 transition-all"
                 >
                   <span>Upgrade to Pro</span>
-                  <TrendingUp className="w-3 h-3" />
+                  <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </Link>
               </div>
             </div>
@@ -258,13 +258,13 @@ export default function Dashboard() {
           {/* Total Resumes */}
           <div className="bg-white p-4 sm:p-5 lg:p-6 rounded-xl shadow hover:shadow-lg transition-all duration-300 hover:scale-105 border border-gray-100 group">
             <div className="flex items-center justify-between mb-1 sm:mb-2">
-              <h3 className="text-gray-600 text-xs sm:text-sm font-medium">Total Resumes</h3>
+              <h3 className="text-gray-600 text-sm sm:text-base font-medium">Total Resumes</h3>
               <div className="p-1.5 sm:p-2 bg-orange-50 rounded-lg group-hover:bg-orange-100 transition-colors">
-                <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-600" />
+                <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" />
               </div>
             </div>
             <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{resumes.length}</p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs sm:text-sm text-gray-500 mt-1">
               {resumes.length > 0 ? '🎉 Great progress!' : 'Start creating!'}
             </p>
           </div>
@@ -393,26 +393,26 @@ export default function Dashboard() {
                             </span>
                           )}
                         </div>
-                        <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900 mb-1 truncate group-hover:text-indigo-600 transition-colors">
+                        <h3 className="font-semibold text-base sm:text-lg lg:text-xl text-gray-900 mb-1 truncate group-hover:text-indigo-600 transition-colors">
                           {resumeName}
                         </h3>
-                        <p className="text-xs sm:text-sm text-gray-500 mb-2">
+                        <p className="text-sm sm:text-base text-gray-500 mb-2">
                           Updated {new Date(resume.updatedAt).toLocaleDateString()}
                         </p>
                         {resume.template && (
                           <div className="flex items-center gap-2">
-                            <span className="text-[10px] sm:text-xs text-indigo-600 font-medium capitalize px-2 py-0.5 bg-indigo-50 rounded">
+                            <span className="text-xs sm:text-sm text-indigo-600 font-medium capitalize px-2 py-0.5 bg-indigo-50 rounded">
                               {resume.template === 'classic' ? 'ATS-Friendly' : resume.template}
                             </span>
                           </div>
                         )}
-                        <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+                        <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-sm sm:text-base text-gray-500">
                           <span className="flex items-center gap-1">
-                            <Eye className="w-3 h-3" />
+                            <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             View
                           </span>
                           <span className="flex items-center gap-1">
-                            <Edit3 className="w-3 h-3" />
+                            <Edit3 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             Edit
                           </span>
                         </div>
@@ -497,30 +497,30 @@ export default function Dashboard() {
                             <Globe className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
                           </div>
                           {portfolio.published && (
-                            <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] sm:text-xs font-medium rounded-full">
+                            <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs sm:text-sm font-medium rounded-full">
                               Live
                             </span>
                           )}
                         </div>
-                        <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900 mb-1 truncate group-hover:text-purple-600 transition-colors">
+                        <h3 className="font-semibold text-base sm:text-lg lg:text-xl text-gray-900 mb-1 truncate group-hover:text-purple-600 transition-colors">
                           {portfolioName}
                         </h3>
-                        <p className="text-xs sm:text-sm text-gray-500 mb-2 flex items-center gap-1">
-                          <Eye className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                        <p className="text-sm sm:text-base text-gray-500 mb-2 flex items-center gap-1">
+                          <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                           {portfolio.views || 0} views
                         </p>
                         {portfolio.theme && (
-                          <span className="text-[10px] sm:text-xs text-purple-600 font-medium capitalize px-2 py-0.5 bg-purple-50 rounded">
+                          <span className="text-xs sm:text-sm text-purple-600 font-medium capitalize px-2 py-0.5 bg-purple-50 rounded">
                             {portfolio.theme} theme
                           </span>
                         )}
-                        <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+                        <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-sm sm:text-base text-gray-500">
                           <span className="flex items-center gap-1">
-                            <Eye className="w-3 h-3" />
+                            <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             View
                           </span>
                           <span className="flex items-center gap-1">
-                            <Edit3 className="w-3 h-3" />
+                            <Edit3 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             Edit
                           </span>
                         </div>
@@ -603,30 +603,30 @@ export default function Dashboard() {
                             <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                           </div>
                           {coverLetter.aiGenerated && (
-                            <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-[10px] sm:text-xs font-medium rounded-full flex items-center gap-1">
-                              <Sparkles className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                            <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs sm:text-sm font-medium rounded-full flex items-center gap-1">
+                              <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                               AI
                             </span>
                           )}
                         </div>
-                        <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900 mb-1 truncate group-hover:text-green-600 transition-colors">
+                        <h3 className="font-semibold text-base sm:text-lg lg:text-xl text-gray-900 mb-1 truncate group-hover:text-green-600 transition-colors">
                           {coverLetter.jobTitle}
                         </h3>
                         {coverLetter.companyName && (
-                          <p className="text-xs sm:text-sm text-gray-600 mb-2 truncate">
+                          <p className="text-sm sm:text-base text-gray-600 mb-2 truncate">
                             {coverLetter.companyName}
                           </p>
                         )}
-                        <p className="text-xs sm:text-sm text-gray-500 mb-2">
+                        <p className="text-sm sm:text-base text-gray-500 mb-2">
                           Updated {new Date(coverLetter.updatedAt).toLocaleDateString()}
                         </p>
-                        <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+                        <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-sm sm:text-base text-gray-500">
                           <span className="flex items-center gap-1">
-                            <Eye className="w-3 h-3" />
+                            <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             View
                           </span>
                           <span className="flex items-center gap-1">
-                            <Edit3 className="w-3 h-3" />
+                            <Edit3 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             Edit
                           </span>
                         </div>

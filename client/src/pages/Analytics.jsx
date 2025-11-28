@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { TrendingUp, Eye, Download, FileText, Globe, Mail, BarChart3, Activity, Sparkles, ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import { TrendingUp, Eye, Download, FileText, Globe, Mail, BarChart3, Activity, Sparkles } from 'lucide-react';
 import api from '../lib/api';
 import { useAuthStore } from '../store/authStore';
 
@@ -55,8 +55,8 @@ export default function Analytics() {
                 Analytics Dashboard
               </h1>
             </div>
-            <p className="text-sm sm:text-base text-gray-600 flex items-center gap-2">
-              <Activity className="w-4 h-4 text-indigo-600" />
+            <p className="text-base sm:text-lg text-gray-600 flex items-center gap-2">
+              <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />
               Track your resume and portfolio performance
             </p>
           </div>
@@ -68,7 +68,7 @@ export default function Analytics() {
             <button
               key={days}
               onClick={() => setTimeRange(days)}
-              className={`px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 rounded-lg font-semibold transition-all text-xs sm:text-sm whitespace-nowrap ${
+              className={`px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 rounded-lg font-semibold transition-all text-sm sm:text-base whitespace-nowrap ${
                 timeRange === days
                   ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md scale-105'
                   : 'text-gray-700 hover:bg-gray-100 hover:scale-105'
@@ -130,7 +130,7 @@ export default function Analytics() {
               </div>
               <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">AI Enhancements Used</h2>
             </div>
-            <div className="flex items-baseline gap-3 mb-2">
+            <div className="flex items-center gap-3 mb-2">
               <div className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 {totalStats.ai_enhancement_used || 0}
               </div>
@@ -138,8 +138,8 @@ export default function Analytics() {
                 Total
               </div>
             </div>
-            <p className="text-sm sm:text-base text-gray-600 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-indigo-600" />
+            <p className="text-base sm:text-lg text-gray-600 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />
               AI-powered improvements to your content
             </p>
           </div>
@@ -154,25 +154,25 @@ export default function Analytics() {
                 <span>PRO FEATURE</span>
               </div>
               <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-3">Advanced Analytics Coming Soon!</h3>
-              <p className="text-sm sm:text-base text-gray-600 mb-6">
+              <p className="text-base sm:text-lg text-gray-600 mb-6">
                 We're working on detailed performance metrics, engagement scores, conversion rates, and advanced insights for Pro users. Stay tuned!
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                 <div className="p-3 bg-white rounded-lg border border-gray-200">
                   <BarChart3 className="w-6 h-6 text-indigo-600 mx-auto mb-2" />
-                  <p className="text-xs text-gray-600">Conversion Rate</p>
+                  <p className="text-xs sm:text-sm text-gray-600">Conversion Rate</p>
                 </div>
                 <div className="p-3 bg-white rounded-lg border border-gray-200">
                   <Activity className="w-6 h-6 text-purple-600 mx-auto mb-2" />
-                  <p className="text-xs text-gray-600">Engagement</p>
+                  <p className="text-xs sm:text-sm text-gray-600">Engagement</p>
                 </div>
                 <div className="p-3 bg-white rounded-lg border border-gray-200">
                   <TrendingUp className="w-6 h-6 text-green-600 mx-auto mb-2" />
-                  <p className="text-xs text-gray-600">Success Rate</p>
+                  <p className="text-xs sm:text-sm text-gray-600">Success Rate</p>
                 </div>
                 <div className="p-3 bg-white rounded-lg border border-gray-200">
                   <Eye className="w-6 h-6 text-blue-600 mx-auto mb-2" />
-                  <p className="text-xs text-gray-600">Peak Times</p>
+                  <p className="text-xs sm:text-sm text-gray-600">Peak Times</p>
                 </div>
               </div>
             </div>
@@ -227,10 +227,6 @@ function StatCard({ icon: Icon, title, value, color }) {
     orange: 'from-orange-500 to-red-500'
   };
 
-  // Simulate trend (you can replace with real data)
-  const trend = value > 0 ? (Math.random() > 0.5 ? 'up' : Math.random() > 0.5 ? 'down' : 'neutral') : 'neutral';
-  const trendValue = value > 0 ? Math.floor(Math.random() * 30) + 5 : 0;
-
   return (
     <div className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-3 sm:p-4 lg:p-6 border border-gray-100 hover:border-gray-200 hover:scale-105 relative overflow-hidden">
       {/* Background gradient effect */}
@@ -241,20 +237,8 @@ function StatCard({ icon: Icon, title, value, color }) {
           <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl ${colorClasses[color]} flex items-center justify-center border group-hover:scale-110 transition-transform duration-300`}>
             <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
-          {value > 0 && (
-            <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold ${
-              trend === 'up' ? 'bg-green-100 text-green-700' : 
-              trend === 'down' ? 'bg-red-100 text-red-700' : 
-              'bg-gray-100 text-gray-600'
-            }`}>
-              {trend === 'up' && <ArrowUp className="w-3 h-3" />}
-              {trend === 'down' && <ArrowDown className="w-3 h-3" />}
-              {trend === 'neutral' && <Minus className="w-3 h-3" />}
-              {trend !== 'neutral' && <span>{trendValue}%</span>}
-            </div>
-          )}
         </div>
-        <h3 className="text-gray-600 text-xs sm:text-sm font-medium mb-1 sm:mb-2 line-clamp-2">{title}</h3>
+        <h3 className="text-gray-600 text-sm sm:text-base font-medium mb-1 sm:mb-2 line-clamp-2">{title}</h3>
         <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">{value}</p>
       </div>
     </div>

@@ -22,7 +22,14 @@ export default function Navbar() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 max-w-7xl">
         <div className="flex justify-between items-center">
           {/* Logo - Enhanced with better animation */}
-          <Link to={user ? '/dashboard' : '/'} className="flex items-center gap-2 sm:gap-2.5 group">
+          <Link 
+            to={user ? '/dashboard' : '/'} 
+            className="flex items-center gap-2 sm:gap-2.5 group"
+            onClick={() => {
+              // Scroll to top when clicking logo
+              window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+            }}
+          >
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg blur-sm opacity-50 group-hover:opacity-75 transition-opacity"></div>
               <div className="relative bg-gradient-to-br from-indigo-600 to-purple-600 text-white p-1.5 sm:p-2 rounded-lg group-hover:scale-110 transition-all duration-300 shadow-md">

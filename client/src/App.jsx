@@ -3,6 +3,11 @@ import { Toaster } from 'react-hot-toast';
 import { useAuthStore } from './store/authStore';
 import Navbar from './components/Navbar';
 import ScrollToTop from './components/ScrollToTop';
+
+// Disable browser scroll restoration globally
+if ('scrollRestoration' in window.history) {
+  window.history.scrollRestoration = 'manual';
+}
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';

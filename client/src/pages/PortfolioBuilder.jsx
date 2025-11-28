@@ -332,16 +332,16 @@ export default function PortfolioBuilder() {
               <button
                 onClick={() => setShowAIModal(true)}
                 disabled={generating}
-                className="flex items-center justify-center gap-1.5 sm:gap-2 bg-purple-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-purple-700 disabled:opacity-50 text-xs sm:text-sm lg:text-base flex-1 sm:flex-initial min-w-[120px] sm:min-w-[140px]"
+                className="flex items-center justify-center gap-1.5 sm:gap-2 bg-purple-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-purple-700 disabled:opacity-50 text-sm sm:text-base font-medium flex-1 sm:flex-initial min-w-[120px] sm:min-w-[140px]"
               >
-                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="whitespace-nowrap">{generating ? 'Generating...' : 'AI Generate'}</span>
               </button>
               <button
                 onClick={() => setShowPreview(!showPreview)}
-                className="flex items-center justify-center gap-1.5 sm:gap-2 bg-gray-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-gray-700 text-xs sm:text-sm lg:text-base flex-1 sm:flex-initial min-w-[90px] sm:min-w-[100px]"
+                className="flex items-center justify-center gap-1.5 sm:gap-2 bg-gray-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-gray-700 text-sm sm:text-base font-medium flex-1 sm:flex-initial min-w-[90px] sm:min-w-[100px]"
               >
-                <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="whitespace-nowrap">{showPreview ? 'Hide' : 'Preview'}</span>
               </button>
             </div>
@@ -360,7 +360,7 @@ export default function PortfolioBuilder() {
                       placeholder="e.g., Finesse, YourBrand"
                       className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
                     />
-                    <p className="text-[10px] sm:text-xs text-gray-500 mt-1">Custom text for your SVG logo. Leave empty to use your name.</p>
+                    <p className="text-xs sm:text-sm text-gray-500 mt-1">Custom text for your SVG logo. Leave empty to use your name.</p>
                   </div>
                   
                   <div>
@@ -419,7 +419,7 @@ export default function PortfolioBuilder() {
                         </>
                       )}
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">PNG, SVG, or JPG, max 2MB</p>
+                    <p className="text-xs sm:text-sm text-gray-500 mt-1">PNG, SVG, or JPG, max 2MB</p>
                   </div>
                 </div>
               </section>
@@ -482,7 +482,7 @@ export default function PortfolioBuilder() {
                       </>
                     )}
                   </div>
-                  <p className="text-[10px] sm:text-xs lg:text-sm text-gray-500 mt-1.5 sm:mt-2">Square image recommended, max 3MB</p>
+                  <p className="text-xs sm:text-sm text-gray-500 mt-1.5 sm:mt-2">Square image recommended, max 3MB</p>
                 </div>
               </section>
             </div>
@@ -498,7 +498,7 @@ export default function PortfolioBuilder() {
                 />
                 <span className="text-xs sm:text-sm lg:text-base text-gray-600 whitespace-nowrap">.careercraftai.com</span>
               </div>
-              <p className="text-[10px] sm:text-xs lg:text-sm text-gray-500 mt-1.5 sm:mt-2">Choose a unique subdomain for your portfolio</p>
+              <p className="text-xs sm:text-sm text-gray-500 mt-1.5 sm:mt-2">Choose a unique subdomain for your portfolio</p>
             </section>
 
             {/* Color Theme */}
@@ -549,7 +549,7 @@ export default function PortfolioBuilder() {
                             className="h-10 sm:h-12 rounded-md mb-2"
                             style={{ backgroundImage: `linear-gradient(to right, ${theme.from}, ${theme.to})` }}
                           ></div>
-                          <p className="text-[10px] sm:text-xs font-medium text-center leading-tight">{theme.name}</p>
+                          <p className="text-xs sm:text-sm font-medium text-center leading-tight">{theme.name}</p>
                           {watch('colorTheme') === theme.value && (
                             <div className="absolute top-2 right-2 w-4 h-4 sm:w-5 sm:h-5 bg-indigo-600 rounded-full flex items-center justify-center">
                               <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -804,7 +804,7 @@ export default function PortfolioBuilder() {
                   <label className="block text-xs sm:text-sm font-medium mb-1.5 text-gray-700">Phone</label>
                   <input
                     {...register('content.contact.phone')}
-                    placeholder="+1 234 567 8900"
+                    placeholder="+977 98-12345678"
                     className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base"
                   />
                 </div>
@@ -969,7 +969,7 @@ export default function PortfolioBuilder() {
                 </>
               )}
               {!id && (
-                <p className="text-[10px] sm:text-xs lg:text-sm text-gray-500 flex items-center justify-center sm:justify-start px-2">
+                <p className="text-xs sm:text-sm text-gray-500 flex items-center justify-center sm:justify-start px-2">
                   💡 Save your portfolio first, then you can publish it
                 </p>
               )}
