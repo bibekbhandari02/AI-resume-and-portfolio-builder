@@ -15,6 +15,7 @@ import coverLetterRoutes from './routes/coverLetter.js';
 import analyticsRoutes from './routes/analytics.js';
 import versionsRoutes from './routes/versions.js';
 import jobAnalyzerRoutes from './routes/jobAnalyzer.js';
+import publicRoutes from './routes/public.js';
 
 dotenv.config();
 
@@ -88,6 +89,7 @@ app.use('/api/cover-letter', coverLetterRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/versions', versionsRoutes);
 app.use('/api/job-analyzer', jobAnalyzerRoutes);
+app.use('/api/public', publicRoutes);
 
 // Root route
 app.get('/', (req, res) => {

@@ -1,9 +1,42 @@
 import { Link, Navigate } from 'react-router-dom';
 import { FileText, Globe, Sparkles, Zap, Users, Award, ArrowRight } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
+import { useState, useEffect } from 'react';
+import api from '../lib/api';
 
 export default function Landing() {
   const { user } = useAuthStore();
+  const [stats, setStats] = useState({
+    users: 0,
+    resumes: 0,
+    successRate: 0
+  });
+
+  useEffect(() => {
+    // Fetch real statistics
+    const fetchStats = async () => {
+      try {
+        const { data } = await api.get('/public/stats');
+        setStats({
+          users: data.users || 0,
+          resumes: data.resumes || 0,
+          successRate: data.successRate || 0
+        });
+      } catch (error) {
+        console.error('Failed to fetch stats:', error);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  // Format numbers with K suffix
+  const formatNumber = (num) => {
+    if (num >= 1000) {
+      return `${(num / 1000).toFixed(1)}K+`;
+    }
+    return `${num}+`;
+  };
 
   // Redirect to dashboard if user is logged in
   if (user) {
@@ -28,7 +61,7 @@ export default function Landing() {
             </span>
           </h1>
           
-          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 mb-6 sm:mb-8 lg:mb-10 max-w-3xl mx-auto leading-relaxed px-4">
+          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-600 mb-6 sm:mb-8 lg:mb-10 max-w-3xl mx-auto leading-relaxed px-4">
             Create ATS-friendly resumes, stunning portfolio websites, and personalized cover letters in minutes. 
             Powered by AI to help you stand out and land your dream job.
           </p>
@@ -52,23 +85,92 @@ export default function Landing() {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mt-10 sm:mt-12 lg:mt-16 max-w-2xl mx-auto px-4">
             <div>
-              <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-indigo-600">10K+</div>
-              <div className="text-xs sm:text-sm text-gray-600 mt-1">Resumes Created</div>
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-indigo-600">
+                {formatNumber(stats.resumes)}
+              </div>
+              <div className="text-sm sm:text-base text-gray-600 mt-1">Resumes Created</div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-purple-600">5K+</div>
-              <div className="text-xs sm:text-sm text-gray-600 mt-1">Happy Users</div>
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-purple-600">
+                {formatNumber(stats.users)}
+              </div>
+              <div className="text-sm sm:text-base text-gray-600 mt-1">Happy Users</div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-pink-600">98%</div>
-              <div className="text-xs sm:text-sm text-gray-600 mt-1">Success Rate</div>
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-pink-600">
+                {stats.successRate}%
+              </div>
+              <div className="text-sm sm:text-base text-gray-600 mt-1">Success Rate</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features */}
+      {/* How It Works */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 max-w-7xl">
+        <div className="text-center mb-10 sm:mb-12 lg:mb-16 px-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4">
+            How It Works
+          </h2>
+          <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+            Get started in 3 simple steps
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-6 sm:gap-8 lg:gap-12 max-w-5xl mx-auto">
+          {/* Step 1 */}
+          <div className="relative text-center">
+            <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-lg">
+              <span className="text-2xl sm:text-3xl font-bold text-white">1</span>
+            </div>
+            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-3 text-gray-900">Sign Up Free</h3>
+            <p className="text-sm sm:text-base lg:text-lg text-gray-600">
+              Create your account in seconds. No credit card required.
+            </p>
+          </div>
+
+          {/* Step 2 */}
+          <div className="relative text-center">
+            <div className="bg-gradient-to-br from-purple-500 to-purple-600 w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-lg">
+              <span className="text-2xl sm:text-3xl font-bold text-white">2</span>
+            </div>
+            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-3 text-gray-900">Choose & Create</h3>
+            <p className="text-sm sm:text-base lg:text-lg text-gray-600">
+              Pick a template and let AI help you create professional content.
+            </p>
+          </div>
+
+          {/* Step 3 */}
+          <div className="relative text-center">
+            <div className="bg-gradient-to-br from-pink-500 to-pink-600 w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-lg">
+              <span className="text-2xl sm:text-3xl font-bold text-white">3</span>
+            </div>
+            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-3 text-gray-900">Download & Apply</h3>
+            <p className="text-sm sm:text-base lg:text-lg text-gray-600">
+              Export as PDF and start applying to your dream jobs.
+            </p>
+          </div>
+        </div>
+
+        {/* CTA Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mt-8 sm:mt-10 lg:mt-12 px-4">
+          <Link 
+            to="/templates" 
+            className="w-full sm:w-auto bg-white text-indigo-600 px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-semibold hover:bg-gray-50 inline-block border-2 border-indigo-600 hover:border-indigo-700 transition-all duration-300 text-center"
+          >
+            View Templates
+          </Link>
+          <Link 
+            to="/pricing" 
+            className="w-full sm:w-auto bg-white text-purple-600 px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-semibold hover:bg-gray-50 inline-block border-2 border-purple-600 hover:border-purple-700 transition-all duration-300 text-center"
+          >
+            See Pricing
+          </Link>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 max-w-7xl bg-gray-50">
         <div className="text-center mb-10 sm:mb-12 lg:mb-16 px-4">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4">
             Everything You Need to Succeed
@@ -83,8 +185,8 @@ export default function Landing() {
             <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl flex items-center justify-center mb-4 sm:mb-5 lg:mb-6 group-hover:scale-110 transition-transform">
               <FileText className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" />
             </div>
-            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-3 text-gray-900">AI Resume Builder</h3>
-            <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+            <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 text-gray-900">AI Resume Builder</h3>
+            <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
               Generate ATS-optimized resumes with professional templates and AI-enhanced content that gets you noticed.
             </p>
           </div>
@@ -93,8 +195,8 @@ export default function Landing() {
             <div className="bg-gradient-to-br from-purple-500 to-purple-600 w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl flex items-center justify-center mb-4 sm:mb-5 lg:mb-6 group-hover:scale-110 transition-transform">
               <Globe className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" />
             </div>
-            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-3 text-gray-900">Portfolio Generator</h3>
-            <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+            <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 text-gray-900">Portfolio Generator</h3>
+            <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
               Create stunning portfolio websites automatically with custom domains and beautiful dark themes.
             </p>
           </div>
@@ -103,8 +205,8 @@ export default function Landing() {
             <div className="bg-gradient-to-br from-pink-500 to-pink-600 w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl flex items-center justify-center mb-4 sm:mb-5 lg:mb-6 group-hover:scale-110 transition-transform">
               <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" />
             </div>
-            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-3 text-gray-900">AI Content Writer</h3>
-            <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+            <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 text-gray-900">AI Content Writer</h3>
+            <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
               Generate personalized cover letters and professional content tailored to specific job positions.
             </p>
           </div>

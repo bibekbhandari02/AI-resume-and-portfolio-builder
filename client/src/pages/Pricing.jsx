@@ -140,8 +140,8 @@ export default function Pricing() {
                 {/* Popular Badge */}
                 {plan.popular && (
                   <div className="absolute -top-2.5 left-1/2 transform -translate-x-1/2">
-                    <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-3 py-0.5 rounded-full text-xs sm:text-sm font-bold shadow-lg flex items-center gap-1 animate-pulse">
-                      <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                    <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-1 sm:py-1.5 rounded-full text-sm sm:text-base font-bold shadow-lg flex items-center gap-1.5 animate-pulse">
+                      <Sparkles className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                       Most Popular
                     </div>
                   </div>
@@ -220,7 +220,7 @@ export default function Pricing() {
 
         {/* Trust Indicators */}
         <div className="mt-8 sm:mt-12 text-center px-4">
-          <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">Trusted by professionals worldwide</p>
+          <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">Join professionals building their careers</p>
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
             <div className="flex items-center gap-2 text-gray-700">
               <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
@@ -228,7 +228,7 @@ export default function Pricing() {
             </div>
             <div className="flex items-center gap-2 text-gray-700">
               <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-              <span className="text-sm sm:text-base font-medium">Cancel Anytime</span>
+              <span className="text-sm sm:text-base font-medium">One-Time Payment</span>
             </div>
             <div className="flex items-center gap-2 text-gray-700">
               <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
@@ -242,16 +242,16 @@ export default function Pricing() {
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-center mb-6 sm:mb-8">Frequently Asked Questions</h2>
           <div className="space-y-3 sm:space-y-4">
             <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-md border border-gray-200">
-              <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1.5 sm:mb-2">Can I switch plans later?</h3>
-              <p className="text-sm sm:text-base text-gray-600">Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately.</p>
+              <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1.5 sm:mb-2">Can I upgrade my plan later?</h3>
+              <p className="text-sm sm:text-base text-gray-600">Yes! You can upgrade to a higher plan at any time to get more credits and features.</p>
             </div>
             <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-md border border-gray-200">
               <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1.5 sm:mb-2">What payment methods do you accept?</h3>
               <p className="text-sm sm:text-base text-gray-600">We accept payments through eSewa, Nepal's most trusted digital wallet.</p>
             </div>
             <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-md border border-gray-200">
-              <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1.5 sm:mb-2">Can I cancel my subscription?</h3>
-              <p className="text-sm sm:text-base text-gray-600">Yes, you can cancel anytime. You'll continue to have access until the end of your billing period.</p>
+              <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1.5 sm:mb-2">What happens when I run out of credits?</h3>
+              <p className="text-sm sm:text-base text-gray-600">You can purchase more credits anytime by upgrading your plan. Your account and existing documents remain safe.</p>
             </div>
           </div>
         </div>
