@@ -2,6 +2,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Check, Sparkles } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
+import SEO from '../components/SEO';
 
 export default function Templates() {
   const navigate = useNavigate();
@@ -100,8 +101,15 @@ export default function Templates() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 py-8 sm:py-12 lg:py-16">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+    <>
+      <SEO 
+        title="Resume Templates - CareerCraft AI"
+        description="Choose from 8 professional, ATS-friendly resume templates. Modern, creative, minimal, and executive designs. All templates optimized for Applicant Tracking Systems."
+        keywords="resume templates, ATS resume templates, professional resume, modern resume, creative resume, free resume templates"
+        url="/templates"
+      />
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 py-8 sm:py-12 lg:py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         {/* Header - Enhanced */}
         <div className="text-center mb-8 sm:mb-10 lg:mb-12 relative">
           <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-32 h-32 bg-gradient-to-br from-indigo-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
@@ -772,5 +780,6 @@ export default function Templates() {
         </div>
       </div>
     </div>
+    </>
   );
 }

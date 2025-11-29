@@ -25,12 +25,20 @@ export const ESEWA_CONFIG = {
 export const PLANS = {
   starter: {
     amount: 600, // NPR 600 (~$5)
-    credits: { resumeGenerations: 20, portfolios: 3 },
+    credits: { 
+      resumeGenerations: 20, 
+      portfolios: 3,
+      coverLetters: 10
+    },
     name: 'Starter Plan'
   },
   pro: {
     amount: 1800, // NPR 1800 (~$15)
-    credits: { resumeGenerations: 999, portfolios: 10 },
+    credits: { 
+      resumeGenerations: 999, 
+      portfolios: 10,
+      coverLetters: 999
+    },
     name: 'Pro Plan'
   }
 };

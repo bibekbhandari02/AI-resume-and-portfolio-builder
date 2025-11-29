@@ -1,27 +1,33 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { useAuthStore } from './store/authStore';
 import Navbar from './components/Navbar';
 import ScrollToTop from './components/ScrollToTop';
+import LoadingSpinner from './components/LoadingSpinner';
 
 // Disable browser scroll restoration globally
 if ('scrollRestoration' in window.history) {
   window.history.scrollRestoration = 'manual';
 }
-import Landing from './pages/Landing';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import ResumeBuilder from './pages/ResumeBuilder';
-import PortfolioBuilder from './pages/PortfolioBuilder';
-import PortfolioView from './pages/PortfolioView';
-import CoverLetterBuilder from './pages/CoverLetterBuilder';
-import Pricing from './pages/Pricing';
-import Templates from './pages/Templates';
-import Analytics from './pages/Analytics';
-import PaymentSuccess from './pages/PaymentSuccess';
-import PaymentFailure from './pages/PaymentFailure';
-import JobAnalyzer from './pages/JobAnalyzer';
+
+// Lazy load pages for better performance
+const Landing = lazy(() => import('./pages/Landing'));
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const ResumeBuilder = lazy(() => import('./pages/ResumeBuilder'));
+const PortfolioBuilder = lazy(() => import('./pages/PortfolioBuilder'));
+const PortfolioView = lazy(() => import('./pages/PortfolioView'));
+const CoverLetterBuilder = lazy(() => import('./pages/CoverLetterBuilder'));
+const Pricing = lazy(() => import('./pages/Pricing'));
+const Templates = lazy(() => import('./pages/Templates'));
+const Analytics = lazy(() => import('./pages/Analytics'));
+const PaymentSuccess = lazy(() => import('./pages/PaymentSuccess'));
+const PaymentFailure = lazy(() => import('./pages/PaymentFailure'));
+const JobAnalyzer = lazy(() => import('./pages/JobAnalyzer'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 
 const PrivateRoute = ({ children }) => {
   const { token } = useAuthStore();
@@ -47,7 +53,8 @@ function App() {
       <ScrollToTop />
       <Toaster position="top-right" />
       <Layout>
-        <Routes>
+        <Suspense fallback={<LoadingSpinner fullScreen />}>
+          <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -88,7 +95,10 @@ function App() {
         <Route path="/payment/failure" element={
           <PrivateRoute><PaymentFailure /></PrivateRoute>
         } />
-        </Routes>
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
+          </Routes>
+        </Suspense>
       </Layout>
     </BrowserRouter>
   );

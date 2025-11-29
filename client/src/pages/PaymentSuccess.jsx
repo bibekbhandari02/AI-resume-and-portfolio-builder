@@ -9,6 +9,8 @@ export default function PaymentSuccess() {
   const navigate = useNavigate();
   const [verifying, setVerifying] = useState(true);
   const [verified, setVerified] = useState(false);
+  const [paymentDetails, setPaymentDetails] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     verifyPayment();
@@ -20,12 +22,11 @@ export default function PaymentSuccess() {
       console.log('All URL params:', Object.fromEntries(searchParams.entries()));
       
       const data = searchParams.get('data');
-      const plan = searchParams.get('plan');
-      const userId = searchParams.get('userId');
 
       if (!data) {
         console.error('No payment data found');
         console.error('Available params:', Array.from(searchParams.keys()));
+        setError('No payment data received');
         setVerifying(false);
         return;
       }
@@ -36,6 +37,7 @@ export default function PaymentSuccess() {
 
       if (!decoded || !decoded.transaction_uuid) {
         console.error('Invalid payment data');
+        setError('Invalid payment data');
         setVerifying(false);
         return;
       }
@@ -45,14 +47,26 @@ export default function PaymentSuccess() {
         data
       });
 
+      console.log('Verification response:', response.data);
+
       if (response.data.success) {
         setVerified(true);
+        setPaymentDetails({
+          plan: response.data.plan,
+          transactionId: response.data.transactionId,
+          creditsAdded: response.data.creditsAdded
+        });
+        
+        // Redirect after 3 seconds
         setTimeout(() => {
           navigate('/dashboard');
         }, 3000);
+      } else {
+        setError('Payment verification failed');
       }
     } catch (error) {
       console.error('Error verifying payment:', error);
+      setError(error.response?.data?.error || error.message || 'Payment verification failed');
     } finally {
       setVerifying(false);
     }
@@ -78,13 +92,23 @@ export default function PaymentSuccess() {
             <span className="text-red-600 text-3xl">✕</span>
           </div>
           <h2 className="text-2xl font-bold mb-2">Verification Failed</h2>
-          <p className="text-gray-600 mb-4">Unable to verify your payment</p>
-          <button
-            onClick={() => navigate('/pricing')}
-            className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700"
-          >
-            Try Again
-          </button>
+          <p className="text-gray-600 mb-4">
+            {error || 'Unable to verify your payment'}
+          </p>
+          <div className="space-y-2">
+            <button
+              onClick={() => navigate('/pricing')}
+              className="w-full bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700"
+            >
+              Try Again
+            </button>
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="w-full bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300"
+            >
+              Go to Dashboard
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -96,6 +120,38 @@ export default function PaymentSuccess() {
         <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
         <h2 className="text-2xl font-bold mb-2">Payment Successful!</h2>
         <p className="text-gray-600 mb-4">Your subscription has been activated</p>
+        
+        {paymentDetails && (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4 text-left">
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Plan:</span>
+                <span className="font-semibold text-gray-900 capitalize">{paymentDetails.plan}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Transaction ID:</span>
+                <span className="font-mono text-xs text-gray-900">{paymentDetails.transactionId?.substring(0, 20)}...</span>
+              </div>
+              {paymentDetails.creditsAdded && (
+                <>
+                  <div className="border-t border-green-200 my-2"></div>
+                  <div className="text-center font-semibold text-green-700">
+                    Credits Added:
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Resume Generations:</span>
+                    <span className="font-semibold text-green-700">+{paymentDetails.creditsAdded.resumeGenerations}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Portfolios:</span>
+                    <span className="font-semibold text-green-700">+{paymentDetails.creditsAdded.portfolios}</span>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+        
         <p className="text-sm text-gray-500">Redirecting to dashboard...</p>
       </div>
     </div>

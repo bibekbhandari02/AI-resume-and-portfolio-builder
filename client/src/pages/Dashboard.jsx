@@ -4,6 +4,7 @@ import { FileText, Globe, Plus, CreditCard, Sparkles, Trash2, Mail, TrendingUp, 
 import { useAuthStore } from '../store/authStore';
 import api, { trackEvent } from '../lib/api';
 import toast from 'react-hot-toast';
+import SEO from '../components/SEO';
 
 export default function Dashboard() {
   const { user, updateUser } = useAuthStore();
@@ -116,12 +117,18 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 max-w-7xl">
+    <>
+      <SEO 
+        title="Dashboard - CareerCraft AI"
+        description="Manage your resumes, portfolios, and cover letters. Create, edit, and download professional career documents with AI assistance."
+        url="/dashboard"
+      />
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 max-w-7xl">
         {/* Welcome */}
         <div className="mb-6 sm:mb-8 lg:mb-10">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 sm:mb-3">
-            Welcome back, {user?.name}! 👋
+            Welcome back, {user?.name}!
           </h1>
           <p className="text-gray-600 text-base sm:text-lg lg:text-xl">Create professional resumes, portfolios, and cover letters with AI</p>
         </div>
@@ -156,12 +163,21 @@ export default function Dashboard() {
                 <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />
               </div>
             </div>
-            <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{user?.credits?.resumeGenerations || 0}</p>
+            <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
+              {user?.credits?.resumeGenerations >= 999 ? (
+                <span className="flex items-center gap-2">
+                  <span>∞</span>
+                  <span className="text-base text-indigo-600">Unlimited</span>
+                </span>
+              ) : (
+                user?.credits?.resumeGenerations || 0
+              )}
+            </p>
             <div className="mt-2 flex items-center gap-2">
-              {user?.subscription === 'pro' ? (
+              {user?.subscription === 'pro' || user?.credits?.resumeGenerations >= 999 ? (
                 <div className="flex items-center gap-1.5 text-indigo-600">
                   <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-                  <span className="text-xs sm:text-sm font-bold">Unlimited</span>
+                  <span className="text-xs sm:text-sm font-bold">Pro Plan</span>
                 </div>
               ) : (
                 <>
@@ -190,7 +206,9 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="flex items-center justify-between mb-1">
-              <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{user?.credits?.portfolios || 0}</p>
+              <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
+                {user?.credits?.portfolios || 0}
+              </p>
               {(user?.subscription === 'starter' || user?.subscription === 'pro') && (
                 <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-bold rounded-full">
                   {user?.subscription === 'pro' ? 'PRO' : 'STARTER+'}
@@ -221,11 +239,20 @@ export default function Dashboard() {
                   <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
                 </div>
               </div>
-              <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{user?.credits?.coverLetters || 0}</p>
+              <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
+                {user?.credits?.coverLetters >= 999 ? (
+                  <span className="flex items-center gap-2">
+                    <span>∞</span>
+                    <span className="text-base text-green-600">Unlimited</span>
+                  </span>
+                ) : (
+                  user?.credits?.coverLetters || 0
+                )}
+              </p>
               <div className="mt-2 flex items-center gap-2">
                 <div className="flex items-center gap-1.5 text-green-600">
                   <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-                  <span className="text-xs sm:text-sm font-bold">Unlimited</span>
+                  <span className="text-xs sm:text-sm font-bold">Pro Plan</span>
                 </div>
               </div>
             </div>
@@ -665,7 +692,8 @@ export default function Dashboard() {
             </>
           )}
         </section>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

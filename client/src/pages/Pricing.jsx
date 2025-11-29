@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import api from '../lib/api';
 import toast from 'react-hot-toast';
+import SEO from '../components/SEO';
 
 export default function Pricing() {
   const navigate = useNavigate();
@@ -103,8 +104,15 @@ export default function Pricing() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 py-8 sm:py-12 lg:py-16">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <>
+      <SEO 
+        title="Pricing Plans - CareerCraft AI"
+        description="Choose the perfect plan for your career needs. Free plan available. Upgrade for unlimited resumes, portfolios, and AI-powered features. One-time payment, no subscription."
+        keywords="pricing, resume builder pricing, portfolio builder cost, career tools pricing, Nepal, affordable resume builder"
+        url="/pricing"
+      />
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 py-8 sm:py-12 lg:py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header - Enhanced */}
         <div className="text-center mb-6 sm:mb-8 lg:mb-10 relative px-4">
           <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-32 h-32 bg-gradient-to-br from-indigo-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
@@ -257,5 +265,6 @@ export default function Pricing() {
         </div>
       </div>
     </div>
+    </>
   );
 }

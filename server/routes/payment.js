@@ -1,10 +1,32 @@
 import express from 'express';
-import crypto from 'crypto';
 import { authenticate } from '../middleware/auth.js';
-import User from '../models/User.js';
 import { ESEWA_CONFIG, PLANS } from '../config/esewa.js';
+import {
+  generateTransactionId,
+  createPaymentSignature,
+  storeTransaction,
+  validatePlanPurchase,
+  processSuccessfulPayment,
+  processFailedPayment,
+  getUserPaymentHistory
+} from '../services/paymentService.js';
+import { trackEvent } from '../services/analytics.js';
 
 const router = express.Router();
+
+// Get available plans
+router.get('/plans', authenticate, async (req, res) => {
+  try {
+    const plans = Object.entries(PLANS).map(([key, value]) => ({
+      id: key,
+      ...value
+    }));
+    
+    res.json({ plans });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // Initiate payment (eSewa API v2)
 router.post('/initiate', authenticate, async (req, res) => {
@@ -18,32 +40,38 @@ router.post('/initiate', authenticate, async (req, res) => {
     
     const { plan } = req.body;
     
-    if (!PLANS[plan]) {
-      return res.status(400).json({ error: 'Invalid plan' });
+    // Validate plan purchase
+    const validation = await validatePlanPurchase(req.userId, plan);
+    if (!validation.valid) {
+      return res.status(400).json({ error: validation.message });
     }
-
-    const planDetails = PLANS[plan];
     
-    // Encode plan and userId in transaction UUID
-    const transactionUuid = `TXN${Date.now()}${plan}${req.userId}`;
+    const planDetails = validation.planDetails;
+    
+    // Generate transaction ID
+    const transactionUuid = generateTransactionId(plan, req.userId);
     
     // For EPAYTEST, use test amount of 100
     const isTestMode = ESEWA_CONFIG.merchantId === 'EPAYTEST';
     const amount = isTestMode ? 100 : planDetails.amount;
     
-    // Create message for signature (must match exactly what's sent)
-    const message = `total_amount=${amount},transaction_uuid=${transactionUuid},product_code=${ESEWA_CONFIG.merchantId}`;
+    // Generate signature
+    const signature = createPaymentSignature(amount, transactionUuid, ESEWA_CONFIG.merchantId);
     
-    // Generate signature using HMAC SHA256
-    const signature = crypto
-      .createHmac('sha256', ESEWA_CONFIG.secretKey)
-      .update(message)
-      .digest('base64');
+    // Store transaction details
+    storeTransaction(transactionUuid, {
+      plan,
+      userId: req.userId.toString(),
+      amount,
+      planDetails
+    });
     
-    // Store transaction mapping (for verification later)
-    // In production, you should store this in a database
-    global.transactionMap = global.transactionMap || {};
-    global.transactionMap[transactionUuid] = { plan, userId: req.userId.toString() };
+    // Track analytics
+    await trackEvent(req.userId, 'payment_initiated', {
+      plan,
+      amount,
+      transactionId: transactionUuid
+    }, req);
     
     // Payment data for eSewa v2
     const paymentData = {
@@ -63,9 +91,11 @@ router.post('/initiate', authenticate, async (req, res) => {
     res.json({
       success: true,
       paymentUrl: ESEWA_CONFIG.paymentUrl,
-      paymentData
+      paymentData,
+      transactionId: transactionUuid
     });
   } catch (error) {
+    console.error('Payment initiation error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -73,7 +103,7 @@ router.post('/initiate', authenticate, async (req, res) => {
 // Verify eSewa payment (API v2)
 router.post('/verify', async (req, res) => {
   try {
-    const { data, plan, userId } = req.body;
+    const { data } = req.body;
     
     if (!data) {
       return res.status(400).json({ error: 'Missing payment data' });
@@ -86,37 +116,32 @@ router.post('/verify', async (req, res) => {
       return res.status(400).json({ error: 'Invalid payment data' });
     }
 
-    // If payment status is already COMPLETE in decoded data, trust it
-    // (eSewa already verified it before redirecting)
+    // If payment status is COMPLETE, process it
     if (decodedData.status === 'COMPLETE') {
-      // Get transaction details from map
-      const transactionInfo = global.transactionMap?.[decodedData.transaction_uuid];
+      const result = await processSuccessfulPayment(
+        decodedData.transaction_uuid,
+        decodedData,
+        req
+      );
       
-      if (!transactionInfo) {
-        return res.status(400).json({
-          success: false,
-          error: 'Transaction not found'
-        });
-      }
-      
-      const { plan: planToActivate, userId: userIdToUpdate } = transactionInfo;
-      
-      // Update user subscription
-      await User.findByIdAndUpdate(userIdToUpdate, {
-        subscription: planToActivate,
-        credits: PLANS[planToActivate].credits
-      });
-
-      // Clean up transaction map
-      delete global.transactionMap[decodedData.transaction_uuid];
-
       res.json({
         success: true,
         message: 'Payment verified successfully',
         transactionId: decodedData.transaction_uuid,
-        plan: planToActivate
+        plan: result.transaction.plan,
+        creditsAdded: result.creditsAdded,
+        user: {
+          subscription: result.user.subscription,
+          credits: result.user.credits
+        }
       });
     } else {
+      await processFailedPayment(
+        decodedData.transaction_uuid,
+        'Payment status not complete',
+        req
+      );
+      
       res.status(400).json({
         success: false,
         error: 'Payment verification failed'
@@ -124,6 +149,60 @@ router.post('/verify', async (req, res) => {
     }
   } catch (error) {
     console.error('Verification error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Handle payment failure callback
+router.post('/failure', async (req, res) => {
+  try {
+    const { transaction_uuid, reason } = req.body;
+    
+    if (transaction_uuid) {
+      await processFailedPayment(transaction_uuid, reason || 'User cancelled', req);
+    }
+    
+    res.json({
+      success: false,
+      message: 'Payment cancelled or failed'
+    });
+  } catch (error) {
+    console.error('Payment failure handler error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get payment history
+router.get('/history', authenticate, async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 10;
+    const history = await getUserPaymentHistory(req.userId, limit);
+    
+    res.json({ history });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get current subscription details
+router.get('/subscription', authenticate, async (req, res) => {
+  try {
+    const User = (await import('../models/User.js')).default;
+    const user = await User.findById(req.userId).select('subscription credits paymentHistory');
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    const currentPlan = PLANS[user.subscription] || null;
+    
+    res.json({
+      subscription: user.subscription,
+      credits: user.credits,
+      planDetails: currentPlan,
+      lastPayment: user.paymentHistory?.[user.paymentHistory.length - 1] || null
+    });
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });

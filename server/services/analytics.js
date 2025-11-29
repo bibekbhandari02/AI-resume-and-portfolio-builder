@@ -113,7 +113,7 @@ export const getDashboardStats = async (userId, days = 30) => {
   // Convert userId to ObjectId if it's a string
   const userObjectId = typeof userId === 'string' ? new mongoose.Types.ObjectId(userId) : userId;
 
-  const [totalStats, dailyStats] = await Promise.all([
+  const [totalStats, dailyStats, categoryStats] = await Promise.all([
     // Total counts
     Analytics.aggregate([
       {
@@ -149,6 +149,38 @@ export const getDashboardStats = async (userId, days = 30) => {
       {
         $sort: { '_id.date': 1 }
       }
+    ]),
+    // Category breakdown (resume, portfolio, AI, payment)
+    Analytics.aggregate([
+      {
+        $match: {
+          userId: userObjectId,
+          createdAt: { $gte: startDate }
+        }
+      },
+      {
+        $addFields: {
+          category: {
+            $switch: {
+              branches: [
+                { case: { $regexMatch: { input: '$eventType', regex: /^resume_/ } }, then: 'resume' },
+                { case: { $regexMatch: { input: '$eventType', regex: /^portfolio_/ } }, then: 'portfolio' },
+                { case: { $regexMatch: { input: '$eventType', regex: /^cover_letter_/ } }, then: 'cover_letter' },
+                { case: { $regexMatch: { input: '$eventType', regex: /^ai_|_analyzed$|_generated$|_optimized$/ } }, then: 'ai' },
+                { case: { $regexMatch: { input: '$eventType', regex: /^payment_/ } }, then: 'payment' },
+                { case: { $regexMatch: { input: '$eventType', regex: /^user_/ } }, then: 'user' }
+              ],
+              default: 'other'
+            }
+          }
+        }
+      },
+      {
+        $group: {
+          _id: '$category',
+          count: { $sum: 1 }
+        }
+      }
     ])
   ]);
 
@@ -157,6 +189,133 @@ export const getDashboardStats = async (userId, days = 30) => {
       acc[item._id] = item.count;
       return acc;
     }, {}),
-    daily: dailyStats
+    daily: dailyStats,
+    byCategory: categoryStats.reduce((acc, item) => {
+      acc[item._id] = item.count;
+      return acc;
+    }, {})
+  };
+};
+
+// Get advanced analytics insights
+export const getAnalyticsInsights = async (userId, days = 30) => {
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+  
+  const userObjectId = typeof userId === 'string' ? new mongoose.Types.ObjectId(userId) : userId;
+
+  const [
+    mostActiveDay,
+    mostUsedFeatures,
+    activityTrend,
+    hourlyActivity
+  ] = await Promise.all([
+    // Most active day
+    Analytics.aggregate([
+      {
+        $match: {
+          userId: userObjectId,
+          createdAt: { $gte: startDate }
+        }
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { count: -1 }
+      },
+      {
+        $limit: 1
+      }
+    ]),
+    
+    // Most used features
+    Analytics.aggregate([
+      {
+        $match: {
+          userId: userObjectId,
+          createdAt: { $gte: startDate }
+        }
+      },
+      {
+        $group: {
+          _id: '$eventType',
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { count: -1 }
+      },
+      {
+        $limit: 5
+      }
+    ]),
+    
+    // Activity trend (comparing first half vs second half)
+    Analytics.aggregate([
+      {
+        $match: {
+          userId: userObjectId,
+          createdAt: { $gte: startDate }
+        }
+      },
+      {
+        $addFields: {
+          period: {
+            $cond: {
+              if: { $lt: ['$createdAt', new Date(startDate.getTime() + (Date.now() - startDate.getTime()) / 2)] },
+              then: 'first_half',
+              else: 'second_half'
+            }
+          }
+        }
+      },
+      {
+        $group: {
+          _id: '$period',
+          count: { $sum: 1 }
+        }
+      }
+    ]),
+    
+    // Hourly activity pattern
+    Analytics.aggregate([
+      {
+        $match: {
+          userId: userObjectId,
+          createdAt: { $gte: startDate }
+        }
+      },
+      {
+        $group: {
+          _id: { $hour: '$createdAt' },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { '_id': 1 }
+      }
+    ])
+  ]);
+
+  // Calculate trend
+  const firstHalf = activityTrend.find(t => t._id === 'first_half')?.count || 0;
+  const secondHalf = activityTrend.find(t => t._id === 'second_half')?.count || 0;
+  const trendPercentage = firstHalf > 0 ? ((secondHalf - firstHalf) / firstHalf * 100).toFixed(1) : 0;
+
+  return {
+    mostActiveDay: mostActiveDay[0] || null,
+    mostUsedFeatures: mostUsedFeatures,
+    activityTrend: {
+      direction: secondHalf > firstHalf ? 'increasing' : secondHalf < firstHalf ? 'decreasing' : 'stable',
+      percentage: Math.abs(trendPercentage),
+      firstHalfCount: firstHalf,
+      secondHalfCount: secondHalf
+    },
+    hourlyActivity: hourlyActivity,
+    peakHour: hourlyActivity.reduce((max, curr) => curr.count > max.count ? curr : max, { _id: 0, count: 0 })
   };
 };

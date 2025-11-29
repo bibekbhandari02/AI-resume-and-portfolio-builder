@@ -16,6 +16,18 @@ router.get('/dashboard', authenticate, async (req, res) => {
   }
 });
 
+// Get analytics insights
+router.get('/insights', authenticate, async (req, res) => {
+  try {
+    const days = parseInt(req.query.days) || 30;
+    const { getAnalyticsInsights } = await import('../services/analytics.js');
+    const insights = await getAnalyticsInsights(req.userId, days);
+    res.json({ insights });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Get resume-specific analytics
 router.get('/resume/:id', authenticate, async (req, res) => {
   try {

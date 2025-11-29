@@ -3,6 +3,7 @@ import { FileText, Globe, Sparkles, Zap, Users, Award, ArrowRight } from 'lucide
 import { useAuthStore } from '../store/authStore';
 import { useState, useEffect } from 'react';
 import api from '../lib/api';
+import SEO from '../components/SEO';
 
 export default function Landing() {
   const { user } = useAuthStore();
@@ -11,6 +12,7 @@ export default function Landing() {
     resumes: 0,
     successRate: 0
   });
+  const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
     // Fetch real statistics
@@ -24,6 +26,8 @@ export default function Landing() {
         });
       } catch (error) {
         console.error('Failed to fetch stats:', error);
+      } finally {
+        setLoadingStats(false);
       }
     };
 
@@ -44,7 +48,14 @@ export default function Landing() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+    <>
+      <SEO 
+        title="CareerCraft AI - AI-Powered Resume, Portfolio & Cover Letter Builder"
+        description="Create ATS-friendly resumes, stunning portfolio websites, and personalized cover letters in minutes. Powered by AI to help you land your dream job. Free to start!"
+        keywords="resume builder, AI resume, portfolio builder, cover letter generator, ATS resume, job application, career tools, Nepal, free resume builder"
+        url="/"
+      />
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
 
       {/* Hero */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24 max-w-7xl">
@@ -61,7 +72,7 @@ export default function Landing() {
             </span>
           </h1>
           
-          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-600 mb-6 sm:mb-8 lg:mb-10 max-w-3xl mx-auto leading-relaxed px-4">
+          <p className="text-lg sm:text-xl md:text-2xl lg:text-2xl text-gray-600 mb-6 sm:mb-8 lg:mb-10 max-w-3xl mx-auto leading-relaxed px-4">
             Create ATS-friendly resumes, stunning portfolio websites, and personalized cover letters in minutes. 
             Powered by AI to help you stand out and land your dream job.
           </p>
@@ -71,7 +82,7 @@ export default function Landing() {
               to="/register" 
               className="w-full sm:w-auto group bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-semibold hover:from-indigo-700 hover:to-purple-700 inline-flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
-              Start Building Free
+              Try It Free
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link 
@@ -85,21 +96,33 @@ export default function Landing() {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mt-10 sm:mt-12 lg:mt-16 max-w-2xl mx-auto px-4">
             <div>
-              <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-indigo-600">
-                {formatNumber(stats.resumes)}
-              </div>
+              {loadingStats ? (
+                <div className="h-10 bg-gray-200 rounded animate-pulse mb-2"></div>
+              ) : (
+                <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-indigo-600">
+                  {formatNumber(stats.resumes)}
+                </div>
+              )}
               <div className="text-sm sm:text-base text-gray-600 mt-1">Resumes Created</div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-purple-600">
-                {formatNumber(stats.users)}
-              </div>
+              {loadingStats ? (
+                <div className="h-10 bg-gray-200 rounded animate-pulse mb-2"></div>
+              ) : (
+                <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-purple-600">
+                  {formatNumber(stats.users)}
+                </div>
+              )}
               <div className="text-sm sm:text-base text-gray-600 mt-1">Happy Users</div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-pink-600">
-                {stats.successRate}%
-              </div>
+              {loadingStats ? (
+                <div className="h-10 bg-gray-200 rounded animate-pulse mb-2"></div>
+              ) : (
+                <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-pink-600">
+                  {stats.successRate}%
+                </div>
+              )}
               <div className="text-sm sm:text-base text-gray-600 mt-1">Success Rate</div>
             </div>
           </div>
@@ -225,12 +248,12 @@ export default function Landing() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 max-w-5xl mx-auto">
             {[
-              { icon: Zap, text: 'ATS-friendly formatting' },
-              { icon: FileText, text: 'Multiple professional templates' },
-              { icon: Sparkles, text: 'AI-powered content enhancement' },
-              { icon: Globe, text: 'One-click portfolio generation' },
-              { icon: Award, text: 'PDF & DOCX export' },
-              { icon: Users, text: 'Custom domain support' }
+              { icon: Award, text: '90+ ATS Score Guaranteed' },
+              { icon: Zap, text: '5-Minute Setup' },
+              { icon: FileText, text: 'Download in Multiple Formats' },
+              { icon: Sparkles, text: 'AI-Powered Content Enhancement' },
+              { icon: Globe, text: 'One-Click Portfolio Generation' },
+              { icon: Users, text: 'Custom Domain Support' }
             ].map((benefit, i) => (
               <div key={i} className="flex items-center gap-3 sm:gap-4 bg-white/10 backdrop-blur-sm p-3 sm:p-4 rounded-xl hover:bg-white/20 transition-all duration-300">
                 <div className="bg-white/20 p-1.5 sm:p-2 rounded-lg flex-shrink-0">
@@ -246,7 +269,7 @@ export default function Landing() {
               to="/register" 
               className="w-full sm:w-auto bg-white text-indigo-600 px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-semibold hover:bg-gray-50 inline-flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
-              Get Started Now
+              Create Your Resume
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </Link>
           </div>
@@ -274,21 +297,87 @@ export default function Landing() {
 
       {/* Footer */}
       <footer className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-12 max-w-7xl border-t border-gray-200">
-        <div className="text-center">
-          <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4">
-            <div className="bg-indigo-600 text-white p-1.5 sm:p-2 rounded-lg">
-              <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
+        <div className="grid md:grid-cols-4 gap-8 mb-8">
+          {/* Brand */}
+          <div className="md:col-span-2">
+            <button 
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="flex items-center gap-2 mb-3 hover:opacity-80 transition-opacity cursor-pointer"
+            >
+              <div className="bg-indigo-600 text-white p-1.5 sm:p-2 rounded-lg">
+                <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
+              </div>
+              <span className="text-lg sm:text-xl font-bold text-gray-900">CareerCraft AI</span>
+            </button>
+            <p className="text-sm sm:text-base text-gray-600 mb-4 max-w-md">
+              Empowering careers with AI-powered tools. Create professional resumes, portfolios, and cover letters in minutes.
+            </p>
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <span>📧</span>
+              <a href="mailto:narutobibek000@gmail.com" className="hover:text-indigo-600 transition-colors">
+                narutobibek000@gmail.com
+              </a>
             </div>
-            <span className="text-lg sm:text-xl font-bold text-gray-900">CareerCraft AI</span>
           </div>
-          <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
-            Empowering careers with AI-powered tools
-          </p>
+
+          {/* Quick Links */}
+          <div>
+            <h3 className="font-bold text-gray-900 mb-3">Quick Links</h3>
+            <ul className="space-y-2 text-sm sm:text-base">
+              <li>
+                <Link to="/templates" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                  Templates
+                </Link>
+              </li>
+              <li>
+                <Link to="/pricing" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                  Pricing
+                </Link>
+              </li>
+              <li>
+                <Link to="/register" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                  Get Started
+                </Link>
+              </li>
+              <li>
+                <Link to="/login" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                  Sign In
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Resources */}
+          <div>
+            <h3 className="font-bold text-gray-900 mb-3">Resources</h3>
+            <ul className="space-y-2 text-sm sm:text-base">
+              <li>
+                <a href="mailto:narutobibek000@gmail.com" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                  Contact Support
+                </a>
+              </li>
+              <li>
+                <Link to="/privacy" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms" className="text-gray-600 hover:text-indigo-600 transition-colors">
+                  Terms of Service
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="pt-6 border-t border-gray-200 text-center">
           <p className="text-xs sm:text-sm text-gray-500">
             &copy; {new Date().getFullYear()} CareerCraft AI. All rights reserved.
           </p>
         </div>
       </footer>
     </div>
+    </>
   );
 }

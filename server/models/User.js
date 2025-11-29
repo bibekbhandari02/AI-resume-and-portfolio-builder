@@ -28,6 +28,25 @@ const userSchema = new mongoose.Schema({
   },
   stripeCustomerId: String,
   stripeSubscriptionId: String,
+  paymentHistory: [{
+    transactionId: String,
+    plan: String,
+    amount: Number,
+    date: { type: Date, default: Date.now },
+    status: {
+      type: String,
+      enum: ['pending', 'completed', 'failed', 'refunded'],
+      default: 'completed'
+    },
+    paymentMethod: {
+      type: String,
+      enum: ['esewa', 'stripe', 'manual'],
+      default: 'esewa'
+    },
+    paymentData: mongoose.Schema.Types.Mixed,
+    refundReason: String,
+    refundedAt: Date
+  }],
   profile: {
     phone: String,
     location: String,

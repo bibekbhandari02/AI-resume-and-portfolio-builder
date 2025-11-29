@@ -9,6 +9,7 @@ import userRoutes from './routes/user.js';
 import resumeRoutes from './routes/resume.js';
 import portfolioRoutes from './routes/portfolio.js';
 import aiRoutes from './routes/ai.js';
+import aiEnhancedRoutes from './routes/aiEnhanced.js';
 import paymentRoutes from './routes/payment.js';
 import uploadRoutes from './routes/upload.js';
 import coverLetterRoutes from './routes/coverLetter.js';
@@ -83,6 +84,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/resume', resumeRoutes);
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/ai-enhanced', aiEnhancedRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/cover-letter', coverLetterRoutes);
@@ -95,16 +97,27 @@ app.use('/api/public', publicRoutes);
 app.get('/', (req, res) => {
   res.json({ 
     status: 'ok', 
-    message: 'Portfolio Builder API is running',
+    message: 'CareerCraft AI API is running',
+    version: '2.0.0',
     endpoints: {
       auth: '/api/auth',
       user: '/api/user',
       resume: '/api/resume',
       portfolio: '/api/portfolio',
       ai: '/api/ai',
+      aiEnhanced: '/api/ai-enhanced',
       payment: '/api/payment',
       upload: '/api/upload',
-      coverLetter: '/api/cover-letter'
+      coverLetter: '/api/cover-letter',
+      analytics: '/api/analytics',
+      versions: '/api/versions',
+      jobAnalyzer: '/api/job-analyzer',
+      public: '/api/public'
+    },
+    features: {
+      payment: 'Enhanced payment flow with transaction tracking',
+      ai: 'Advanced AI features including job matching, skill gap analysis, interview prep',
+      analytics: 'Comprehensive analytics with insights and trends'
     }
   });
 });
