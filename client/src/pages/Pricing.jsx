@@ -50,7 +50,43 @@ export default function Pricing() {
       }
     } catch (error) {
       const errorMessage = error.response?.data?.error || 'Failed to initiate payment';
-      toast.error(errorMessage, { id: 'payment' });
+      
+      // If there's a pending payment error, offer to cancel it
+      if (errorMessage.includes('pending payment')) {
+        toast.error(errorMessage, { id: 'payment', duration: 5000 });
+        
+        // Auto-cancel pending transaction and retry
+        try {
+          await api.post('/payment/cancel-pending');
+          toast.loading('Retrying payment...', { id: 'payment' });
+          
+          // Retry the payment initiation
+          const { data } = await api.post('/payment/initiate', { plan });
+          
+          if (data.success) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = data.paymentUrl;
+
+            Object.keys(data.paymentData).forEach(key => {
+              const input = document.createElement('input');
+              input.type = 'hidden';
+              input.name = key;
+              input.value = data.paymentData[key];
+              form.appendChild(input);
+            });
+
+            document.body.appendChild(form);
+            toast.success('Opening eSewa payment gateway...', { id: 'payment' });
+            form.submit();
+          }
+        } catch (retryError) {
+          toast.error('Please try again in a moment', { id: 'payment' });
+        }
+      } else {
+        toast.error(errorMessage, { id: 'payment' });
+      }
+      
       console.error('Payment error:', error);
     }
   };

@@ -40,7 +40,7 @@ export const storeTransaction = (transactionId, data) => {
     status: 'pending'
   });
   
-  // Auto-cleanup after 1 hour
+  // Auto-cleanup after 10 minutes (reduced from 1 hour)
   setTimeout(() => {
     if (transactionStore.has(transactionId)) {
       const transaction = transactionStore.get(transactionId);
@@ -48,7 +48,7 @@ export const storeTransaction = (transactionId, data) => {
         transactionStore.delete(transactionId);
       }
     }
-  }, 60 * 60 * 1000);
+  }, 10 * 60 * 1000);
 };
 
 // Get transaction details
@@ -213,15 +213,30 @@ export const validatePlanPurchase = async (userId, plan) => {
       return { valid: false, message: 'You already have this plan' };
     }
     
-    // Check for pending transactions
+    // Check for pending transactions (only recent ones - within 10 minutes)
+    const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
     const pendingTransactions = Array.from(transactionStore.values()).filter(
-      t => t.userId === userId.toString() && t.status === 'pending'
+      t => t.userId === userId.toString() && 
+           t.status === 'pending' &&
+           new Date(t.createdAt) > tenMinutesAgo
     );
+    
+    // Clean up old pending transactions
+    if (pendingTransactions.length === 0) {
+      // Remove any old pending transactions for this user
+      Array.from(transactionStore.entries()).forEach(([key, t]) => {
+        if (t.userId === userId.toString() && 
+            t.status === 'pending' && 
+            new Date(t.createdAt) <= tenMinutesAgo) {
+          transactionStore.delete(key);
+        }
+      });
+    }
     
     if (pendingTransactions.length > 0) {
       return { 
         valid: false, 
-        message: 'You have a pending payment. Please complete or cancel it first.' 
+        message: 'You have a pending payment. Please wait a moment or try again.' 
       };
     }
     
@@ -229,6 +244,23 @@ export const validatePlanPurchase = async (userId, plan) => {
     
   } catch (error) {
     console.error('Plan validation error:', error);
+    throw error;
+  }
+};
+
+// Cancel pending transaction
+export const cancelPendingTransaction = (userId) => {
+  try {
+    let cancelled = false;
+    Array.from(transactionStore.entries()).forEach(([key, transaction]) => {
+      if (transaction.userId === userId.toString() && transaction.status === 'pending') {
+        transactionStore.delete(key);
+        cancelled = true;
+      }
+    });
+    return { success: true, cancelled };
+  } catch (error) {
+    console.error('Cancel transaction error:', error);
     throw error;
   }
 };
@@ -298,5 +330,6 @@ export default {
   processFailedPayment,
   getUserPaymentHistory,
   validatePlanPurchase,
+  cancelPendingTransaction,
   refundPayment
 };

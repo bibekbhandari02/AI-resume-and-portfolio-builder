@@ -8,7 +8,8 @@ import {
   validatePlanPurchase,
   processSuccessfulPayment,
   processFailedPayment,
-  getUserPaymentHistory
+  getUserPaymentHistory,
+  cancelPendingTransaction
 } from '../services/paymentService.js';
 import { trackEvent } from '../services/analytics.js';
 
@@ -203,6 +204,28 @@ router.get('/subscription', authenticate, async (req, res) => {
       lastPayment: user.paymentHistory?.[user.paymentHistory.length - 1] || null
     });
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Cancel pending transaction
+router.post('/cancel-pending', authenticate, async (req, res) => {
+  try {
+    const result = cancelPendingTransaction(req.userId);
+    
+    if (result.cancelled) {
+      res.json({
+        success: true,
+        message: 'Pending transaction cancelled successfully'
+      });
+    } else {
+      res.json({
+        success: true,
+        message: 'No pending transactions found'
+      });
+    }
+  } catch (error) {
+    console.error('Cancel pending transaction error:', error);
     res.status(500).json({ error: error.message });
   }
 });
