@@ -31,6 +31,7 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
   'https://portfolio-builder-client-9ejw.onrender.com',
+  'https://portfolio-builder-client.onrender.com',
   process.env.CLIENT_URL
 ].filter(Boolean);
 
@@ -44,6 +45,7 @@ app.use(cors({
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
+      console.log('CORS blocked origin:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
