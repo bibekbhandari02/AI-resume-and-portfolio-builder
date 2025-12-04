@@ -134,20 +134,24 @@ const AboutSection = ({ content, getSkillIcon, portfolio }) => {
       title: "Education",
       id: "education",
       content: (
-        <div className="relative pl-6 sm:pl-8 border-l-2 border-gray-600 space-y-8">
+        <div className="space-y-6">
           {(typeof content.education === 'string' ? content.education.split('\n').map(e => {
             const parts = e.split('|').map(p => p.trim());
             return { degree: parts[0], institution: parts[1], year: parts[2] };
           }) : content.education).map((edu, index) => (
-            <div key={index}>
-              <div className={`absolute left-0 w-3 h-3 sm:w-4 sm:h-4 rounded-full -ml-[7px] sm:-ml-[9px]`} 
-                   style={{ top: index === 0 ? '18%' : `${18 + (index * 50)}%`, backgroundColor: themeColors.primary }} />
-              {edu.title && <p className="text-white font-semibold text-sm md:text-base lg:text-lg">{edu.title}</p>}
-              {(edu.institution || edu.year) && (
-                <p className="text-[#ADB7BE] text-xs md:text-sm lg:text-base font-normal mt-1">
-                  {edu.institution}{edu.institution && edu.year && ' | '}{edu.year}
-                </p>
-              )}
+            <div key={index} className="flex gap-3 items-start">
+              <div 
+                className="w-2 h-2 rounded-full mt-3 flex-shrink-0" 
+                style={{ backgroundColor: themeColors.primary }}
+              />
+              <div>
+                {edu.title && <p className="text-white font-semibold text-sm md:text-base lg:text-lg">{edu.title}</p>}
+                {(edu.institution || edu.year) && (
+                  <p className="text-[#ADB7BE] text-xs md:text-sm lg:text-base font-normal mt-1">
+                    {edu.institution}{edu.institution && edu.year && ' | '}{edu.year}
+                  </p>
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -161,20 +165,24 @@ const AboutSection = ({ content, getSkillIcon, portfolio }) => {
       title: "Certifications",
       id: "certifications",
       content: (
-        <div className="relative pl-6 sm:pl-8 border-l-2 border-gray-600 space-y-8">
+        <div className="space-y-6">
           {(typeof content.certifications === 'string' ? content.certifications.split('\n').map(c => {
             const parts = c.split('|').map(p => p.trim());
             return { name: parts[0], provider: parts[1], date: parts[2] };
           }) : content.certifications).map((cert, index) => (
-            <div key={index}>
-              <div className={`absolute left-0 w-3 h-3 sm:w-4 sm:h-4 rounded-full -ml-[7px] sm:-ml-[9px]`}
-                   style={{ top: index === 0 ? '18%' : `${18 + (index * 50)}%`, backgroundColor: themeColors.primary }} />
-              {cert.title && <p className="text-white font-semibold text-sm md:text-base lg:text-lg">{cert.title}</p>}
-              {(cert.institution || cert.date) && (
-                <p className="text-[#ADB7BE] text-xs md:text-sm lg:text-base font-normal mt-1">
-                  {cert.institution}{cert.institution && cert.date && ' — '}{cert.date}
-                </p>
-              )}
+            <div key={index} className="flex gap-3 items-start">
+              <div 
+                className="w-2 h-2 rounded-full mt-3 flex-shrink-0" 
+                style={{ backgroundColor: themeColors.primary }}
+              />
+              <div>
+                {cert.title && <p className="text-white font-semibold text-sm md:text-base lg:text-lg">{cert.title}</p>}
+                {(cert.institution || cert.date) && (
+                  <p className="text-[#ADB7BE] text-xs md:text-sm lg:text-base font-normal mt-1">
+                    {cert.institution}{cert.institution && cert.date && ' — '}{cert.date}
+                  </p>
+                )}
+              </div>
             </div>
           ))}
         </div>

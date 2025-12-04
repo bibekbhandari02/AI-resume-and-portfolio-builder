@@ -139,10 +139,7 @@ const AboutSection = ({ content, getSkillIcon }) => {
       title: "Education",
       id: "education",
       content: (
-        <div className="relative pl-8 sm:pl-10 space-y-6">
-          {/* Timeline Line */}
-          <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary-500 via-secondary-500 to-primary-500 rounded-full"></div>
-          
+        <div className="space-y-6">
           {(typeof content.education === 'string' ? content.education.split('\n').map(e => {
             const parts = e.split('|').map(p => p.trim());
             return { degree: parts[0], institution: parts[1], year: parts[2] };
@@ -153,13 +150,10 @@ const AboutSection = ({ content, getSkillIcon }) => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="relative"
+              className="flex gap-3 items-start"
             >
-              {/* Timeline Dot - Centered on line and card */}
-              <div className="absolute -left-[39px] sm:-left-[49px] top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 rounded-full theme-gradient shadow-lg ring-2 ring-black"></div>
-              
-              {/* Content Card */}
-              <div className="backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 hover:border-primary-500/30 transition-all duration-300">
+              <div className="w-2 h-2 rounded-full mt-3 flex-shrink-0 theme-gradient"></div>
+              <div>
                 {edu.title && <p className="text-white font-bold text-base md:text-lg">{edu.title}</p>}
                 {(edu.institution || edu.year) && (
                   <p className="text-gray-400 text-sm md:text-base font-medium mt-1">
@@ -180,10 +174,7 @@ const AboutSection = ({ content, getSkillIcon }) => {
       title: "Certifications",
       id: "certifications",
       content: (
-        <div className="relative pl-8 sm:pl-10 space-y-6">
-          {/* Timeline Line */}
-          <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary-500 via-secondary-500 to-primary-500 rounded-full"></div>
-          
+        <div className="space-y-6">
           {(typeof content.certifications === 'string' ? content.certifications.split('\n').map(c => {
             const parts = c.split('|').map(p => p.trim());
             return { name: parts[0], provider: parts[1], date: parts[2] };
@@ -194,13 +185,10 @@ const AboutSection = ({ content, getSkillIcon }) => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="relative"
+              className="flex gap-3 items-start"
             >
-              {/* Timeline Dot - Centered on line and card */}
-              <div className="absolute -left-[39px] sm:-left-[49px] top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 rounded-full theme-gradient shadow-lg ring-2 ring-black"></div>
-              
-              {/* Content Card */}
-              <div className="backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 hover:border-primary-500/30 transition-all duration-300">
+              <div className="w-2 h-2 rounded-full mt-3 flex-shrink-0 theme-gradient"></div>
+              <div>
                 {cert.title && <p className="text-white font-bold text-base md:text-lg">{cert.title}</p>}
                 {(cert.institution || cert.date) && (
                   <p className="text-gray-400 text-sm md:text-base font-medium mt-1">

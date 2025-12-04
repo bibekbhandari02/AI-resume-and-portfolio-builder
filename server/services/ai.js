@@ -929,7 +929,28 @@ Rules:
     console.log('After validation - testimonials count:', parsed.testimonials?.length);
     console.log('Validation complete. All required fields present.');
     
-    return parsed;
+    // Convert escaped newlines to actual newlines in string fields
+    const convertNewlines = (obj) => {
+      if (typeof obj === 'string') {
+        return obj.replace(/\\n/g, '\n');
+      }
+      if (Array.isArray(obj)) {
+        return obj.map(item => convertNewlines(item));
+      }
+      if (obj && typeof obj === 'object') {
+        const converted = {};
+        for (const key in obj) {
+          converted[key] = convertNewlines(obj[key]);
+        }
+        return converted;
+      }
+      return obj;
+    };
+    
+    const finalParsed = convertNewlines(parsed);
+    console.log('After newline conversion - whatIDo:', finalParsed.whatIDo);
+    
+    return finalParsed;
   } catch (error) {
     console.error('=== PORTFOLIO GENERATION ERROR ===');
     console.error('Error message:', error.message);

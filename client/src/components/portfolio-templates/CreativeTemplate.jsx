@@ -145,15 +145,7 @@ const AboutSection = ({ content, getSkillIcon, portfolio }) => {
       title: "Education",
       id: "education",
       content: (
-        <div className="relative pl-8 sm:pl-10 space-y-6">
-          {/* Creative Timeline Line */}
-          <div 
-            className="absolute left-0 top-0 bottom-0 w-1 rounded-full" 
-            style={{
-              background: `linear-gradient(to bottom, ${getThemeColors(portfolio.colorTheme).primary}, ${getThemeColors(portfolio.colorTheme).secondary}, ${getThemeColors(portfolio.colorTheme).primary})`
-            }}
-          />
-          
+        <div className="space-y-6">
           {(typeof content.education === 'string' ? content.education.split('\n').map(e => {
             const parts = e.split('|').map(p => p.trim());
             return { degree: parts[0], institution: parts[1], year: parts[2] };
@@ -163,23 +155,20 @@ const AboutSection = ({ content, getSkillIcon, portfolio }) => {
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1 }}
-              whileHover={{ scale: 1.02, x: 5 }}
-              className="relative"
+              whileHover={{ scale: 1.02 }}
+              className="flex gap-3 items-start"
             >
-              {/* Animated Dot - Centered on line and card */}
               <motion.div
                 initial={{ scale: 0 }}
                 whileInView={{ scale: 1 }}
                 transition={{ delay: index * 0.1 + 0.2, type: "spring" }}
-                className="absolute -left-[40px] sm:-left-[50px] top-[40%] -translate-y-1/2 w-5 h-5 sm:w-6 sm:h-6 rounded-full shadow-lg border-3 border-white"
+                className="w-3 h-3 md:w-4 md:h-4 rounded-full mt-6 flex-shrink-0"
                 style={{
                   background: `linear-gradient(to bottom right, ${getThemeColors(portfolio.colorTheme).primary}, ${getThemeColors(portfolio.colorTheme).secondary})`
                 }}
               />
-              
-              {/* Content Card */}
               <div 
-                className="bg-white rounded-2xl p-4 sm:p-5 shadow-md hover:shadow-xl transition-all duration-300 border-2"
+                className="bg-white rounded-2xl p-4 sm:p-5 shadow-md hover:shadow-xl transition-all duration-300 border-2 flex-1"
                 style={{ borderColor: `${getThemeColors(portfolio.colorTheme).primary}33` }}
               >
                 {edu.title && (
@@ -206,15 +195,7 @@ const AboutSection = ({ content, getSkillIcon, portfolio }) => {
       title: "Certifications",
       id: "certifications",
       content: (
-        <div className="relative pl-8 sm:pl-10 space-y-6">
-          {/* Creative Timeline Line */}
-          <div 
-            className="absolute left-0 top-0 bottom-0 w-1 rounded-full" 
-            style={{
-              background: `linear-gradient(to bottom, ${getThemeColors(portfolio.colorTheme).secondary}, ${getThemeColors(portfolio.colorTheme).primary}, ${getThemeColors(portfolio.colorTheme).secondary})`
-            }}
-          />
-          
+        <div className="space-y-6">
           {(typeof content.certifications === 'string' ? content.certifications.split('\n').map(c => {
             const parts = c.split('|').map(p => p.trim());
             return { name: parts[0], provider: parts[1], date: parts[2] };
@@ -224,23 +205,20 @@ const AboutSection = ({ content, getSkillIcon, portfolio }) => {
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1 }}
-              whileHover={{ scale: 1.02, x: 5 }}
-              className="relative"
+              whileHover={{ scale: 1.02 }}
+              className="flex gap-3 items-start"
             >
-              {/* Animated Dot - Centered on line and card */}
               <motion.div
                 initial={{ scale: 0 }}
                 whileInView={{ scale: 1 }}
                 transition={{ delay: index * 0.1 + 0.2, type: "spring" }}
-                className="absolute -left-[40px] sm:-left-[50px] top-[40%] -translate-y-1/2 w-5 h-5 sm:w-6 sm:h-6 rounded-full shadow-lg border-3 border-white"
+                className="w-3 h-3 md:w-4 md:h-4 rounded-full mt-6 flex-shrink-0"
                 style={{
                   background: `linear-gradient(to bottom right, ${getThemeColors(portfolio.colorTheme).secondary}, ${getThemeColors(portfolio.colorTheme).primary})`
                 }}
               />
-              
-              {/* Content Card */}
               <div 
-                className="bg-white rounded-2xl p-4 sm:p-5 shadow-md hover:shadow-xl transition-all duration-300 border-2"
+                className="bg-white rounded-2xl p-4 sm:p-5 shadow-md hover:shadow-xl transition-all duration-300 border-2 flex-1"
                 style={{ borderColor: `${getThemeColors(portfolio.colorTheme).secondary}33` }}
               >
                 {cert.title && (
